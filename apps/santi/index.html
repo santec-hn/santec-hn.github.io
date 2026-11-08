@@ -76,7 +76,7 @@ const producto=t=>CAT.findIndex((c,i)=>KEYS[i].some(k=>t.includes(k)));
 const pregunta=t=>/\?|^(hacen|tienen|cual|cuanto|como|donde|cuando|a que|puedo|se puede|aceptan|envian|llevan)\b/.test(t);
 function faq(t){
 if(/(horario|a que hora|abren|cierran|abierto)/.test(t))return "Abrimos de lunes a sábado de 8:00 a. m. a 6:00 p. m. 🕗 Los pedidos por aquí los recibo las 24 horas.";
-if(/(donde|ubicad|direcci|entrega|domicilio|envio|envian|llevan)/.test(t))return "Sí 🚚 Hacemos entregas a domicilio en toda Tegucigalpa (envío L 60). También puedes recoger en Col. Las Minitas 📍";
+if(/(donde|ubicad|direcci|entrega|domicilio|envio|envian|llevan)/.test(t))return "Sí 🚚 Hacemos entregas a domicilio en Tegucigalpa y Comayagüela. El costo del envío depende de tu zona: te lo confirmamos según tu colonia al confirmar el pedido. También puedes recoger sin costo en Col. Las Minitas 📍";
 if(/(menu|precio|catalogo|cuanto|que tienen|que hay|que venden|sabores)/.test(t))return "Este es nuestro menú 🍰\n"+CAT.map(c=>"• "+c[0]+" — L "+c[1]).join("\n");
 if(/(persona|humano|asesor|encargad)/.test(t))return "Claro 🙋 Le aviso a una persona del equipo y te escribe por aquí en unos minutos.";
 return null}
