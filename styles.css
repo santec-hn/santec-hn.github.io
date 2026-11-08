@@ -469,3 +469,8 @@ dialog[open]::backdrop{animation:fadein .45s var(--ease-out)}
   .hero h1{font-size:clamp(52px,min(8vw,12.5vh),110px)}
   .hero-copy{padding-top:clamp(120px,19vh,180px)}
 }
+
+/* Apps nuevas */
+.new-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--accent);color:var(--black);font-style:normal;font-size:11px;letter-spacing:.06em;vertical-align:1px}
+.card-actions .btn-circle.demo .circle{background:var(--accent);color:var(--black)}
+.card-actions .btn-circle.demo:hover .circle{background:var(--white)}

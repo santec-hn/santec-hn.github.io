@@ -15,20 +15,33 @@ const APPS = [
     feats: ["Cobro en efectivo, tarjeta o transferencia", "Inventario que se descuenta solo", "Factura por WhatsApp"] },
   { id: "rescate360", name: "Rescate 360", tag: "Emergencias", icon: "i-siren", shot: "r3-inicio",
     desc: "Para bomberos, municipalidades y equipos de rescate: cada emergencia atendida más rápido.",
-    feats: ["Alertas ciudadanas con ubicación y fotos", "Mapa de emergencias en tiempo real", "Gestión de unidades y estadísticas"] }
+    feats: ["Alertas ciudadanas con ubicación y fotos", "Mapa de emergencias en tiempo real", "Gestión de unidades y estadísticas"] },
+  { id: "tuturno", name: "TuTurno", tag: "Salones y barberías", icon: "i-scissors", shot: "tt-agenda", video: false, nuevo: true,
+    desc: "Tus clientes reservan solos, a la hora que sí está libre, y les llega el recordatorio por WhatsApp.",
+    feats: ["Agenda por barbero, estilista o manicurista", "Reservas en línea sin choques de horario", "Caja del día con comisión por profesional"] },
+  { id: "lavafacil", name: "LavaFácil", tag: "Carwash", icon: "i-car", shot: "lf-cola", video: false, nuevo: true,
+    desc: "Cada carro en su etapa, de la espera a la entrega, y el aviso de «tu carro está listo» por WhatsApp.",
+    feats: ["Cola de lavado por bahías y etapas", "Placa con cliente frecuente y tarjeta de sellos", "Turnos, membresías y caja del día"] },
+  { id: "mesalista", name: "MesaLista", tag: "Bares y restaurantes", icon: "i-glass", shot: "ml-mesas", video: false, nuevo: true,
+    desc: "Mesas, comandas y cuentas en orden: la cocina y la barra reciben cada pedido al instante.",
+    feats: ["Plano de mesas y comandas a cocina y barra", "Cuenta con ISV, propina y división entre personas", "Ventas por mesero y lo más vendido"] }
 ];
+const DEMO = (a) => `apps/${a.id}/`;
 
 /* ---------- Tarjetas de apps ---------- */
 const cards = document.getElementById("cards");
 cards.innerHTML = APPS.map((a, i) => `
   <article class="card" style="--i:${i}">
     <div class="card-body">
-      <span class="card-tag">${a.tag}</span>
+      <span class="card-tag">${a.tag}${a.nuevo ? ` <em class="new-tag">Nuevo</em>` : ""}</span>
       <h3>${a.name}</h3>
       <p>${a.desc}</p>
       <ul>${a.feats.map((f) => `<li>${f}</li>`).join("")}</ul>
       <div class="card-actions">
-        <button class="btn-circle" data-video="${a.id}"><span class="circle"><svg><use href="#i-play"/></svg></span>Ver video</button>
+        ${a.video === false
+          ? `<a class="btn-circle demo" href="${DEMO(a)}" target="_blank" rel="noopener"><span class="circle"><svg><use href="#i-arrow-up"/></svg></span>Probar demo</a>`
+          : `<button class="btn-circle" data-video="${a.id}"><span class="circle"><svg><use href="#i-play"/></svg></span>Ver video</button>
+             <a class="text-link" href="${DEMO(a)}" target="_blank" rel="noopener">Probar demo <svg><use href="#i-arrow-up"/></svg></a>`}
         <a class="text-link" href="${WA}?text=${encodeURIComponent(`Hola Santec, me interesa la app ${a.name}`)}" target="_blank" rel="noopener">La quiero <svg><use href="#i-arrow-up"/></svg></a>
       </div>
     </div>
@@ -43,8 +56,9 @@ cards.innerHTML = APPS.map((a, i) => `
   const soundBtn = document.getElementById("reelSound");
   const toggleBtn = document.getElementById("reelToggle");
   let cur = 0, visible = false, userPaused = false;
+  const REEL = APPS.filter((a) => a.video !== false); // solo las apps que tienen video
 
-  list.innerHTML = APPS.map((a, i) => `
+  list.innerHTML = REEL.map((a, i) => `
     <li><button class="reel-item" data-i="${i}">
       <span class="n">0${i + 1}</span>
       <span class="t">${a.name}<small>${a.tag}</small></span>
@@ -57,8 +71,8 @@ cards.innerHTML = APPS.map((a, i) => `
   const load = (i) => {
     cur = i;
     items.forEach((b, k) => { b.classList.toggle("on", k === i); b.querySelector(".bar").style.transform = "scaleX(0)"; });
-    vid.poster = `assets/img/${APPS[i].shot}.webp`;
-    vid.src = `assets/video/${APPS[i].id}.mp4`;
+    vid.poster = `assets/img/${REEL[i].shot}.webp`;
+    vid.src = `assets/video/${REEL[i].id}.mp4`;
     vid.load();
     play();
   };
@@ -67,7 +81,7 @@ cards.innerHTML = APPS.map((a, i) => `
     userPaused = false; toggleBtn.classList.remove("paused");
     load(+b.dataset.i);
   }));
-  vid.addEventListener("ended", () => load((cur + 1) % APPS.length));
+  vid.addEventListener("ended", () => load((cur + 1) % REEL.length));
   vid.addEventListener("timeupdate", () => {
     if (vid.duration) items[cur].querySelector(".bar").style.transform = `scaleX(${vid.currentTime / vid.duration})`;
   });
