@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="es">
+<head>
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0369A1">
+<title>LavaFácil — Carwash</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+:root{--brand:#0369A1;--brand2:#67E8F9;--brand-s:#E0F2FE;--brand-ink:#fff;--hero:linear-gradient(150deg,#0369A1,#0C4A6E)}
+.placa{display:inline-block;font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:.06em;font-size:14px;padding:3px 9px;border-radius:7px;background:#FFF;border:2px solid #1E293B;color:#1E293B}
+.kan{display:grid;gap:12px}
+.kcol h3{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin:0 2px 8px}
+.kcol .list{gap:8px}
+.timer{font-variant-numeric:tabular-nums}
+.sellos{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.sellos i{width:18px;height:18px;border-radius:50%;border:2px solid var(--brand);display:block}
+.sellos i.on{background:var(--brand)}
+@media (min-width:900px){.kan{grid-template-columns:repeat(4,minmax(0,1fr));align-items:start}}
+@media (max-width:899px){.kcol h3{display:none}.kcol.hide{display:none}}
+</style>
+</head>
+<body>
+<script src="../_kit/kit.js"></script>
+<script>
+/* ======================= DATOS ======================= */
+const ETAPAS = ["En espera", "Lavando", "Secado y detalle", "Listo"];
+const VEHIC = [{ id: "sedan", n: "Sedán o turismo", f: 1 }, { id: "suv", n: "Camioneta / SUV", f: 1.3 }, { id: "pick", n: "Pick-up", f: 1.4 }, { id: "moto", n: "Motocicleta", f: .5 }];
+const SERVICIOS = [
+  { id: "b", n: "Lavado básico", d: "Exterior, llantas y secado", p: 150, min: 20 },
+  { id: "c", n: "Lavado completo", d: "Básico + aspirado y tablero", p: 250, min: 35 },
+  { id: "e", n: "Completo + encerado", d: "Completo + cera protectora", p: 450, min: 60 },
+  { id: "m", n: "Lavado de motor", d: "Desengrasado del motor", p: 200, min: 25 },
+  { id: "t", n: "Tapicería", d: "Lavado profundo de asientos", p: 600, min: 120 },
+];
+const METODOS = ["Efectivo", "Tarjeta", "Transferencia"];
+const SELLOS = 10;                      // el lavado número 10 es gratis
+const BAHIAS = 2;                       // carros que se pueden lavar a la vez
+const S = () => SANTEC.S;
+const svc = (id) => SERVICIOS.find((s) => s.id === id);
+const veh = (id) => VEHIC.find((v) => v.id === id);
+const precio = (o) => Math.round(svc(o.serv).p * veh(o.veh).f / 10) * 10 + (o.extras || []).reduce((a, x) => a + svc(x).p, 0);
+const ahoraM = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
+
+function semilla() {
+  const t = ahoraM();
+  const o = (placa, v, s, cli, tel, etapa, hace, extras = []) => ({ id: Math.random().toString(36).slice(2, 9), placa, veh: v, serv: s, extras, cli, tel, etapa, entra: t - hace, fin: null, metodo: null, gratis: false });
+  return {
+    ordenes: [
+      o("HAB 4521", "pick", "c", "Carlos Mejía", "9876-5432", 3, 48), o("PCD 1187", "sedan", "e", "Ana Rodríguez", "9455-1209", 2, 55),
+      o("HBT 9034", "suv", "b", "Transportes López", "3312-7788", 1, 18, ["m"]), o("PDA 5520", "sedan", "c", "María Fernández", "8890-4411", 0, 6),
+      o("HCH 2211", "moto", "b", "José Martínez", "9988-0011", 0, 3),
+    ],
+    hechas: [
+      { placa: "HDR 7781", total: 250, metodo: "Efectivo", serv: "c", hora: "8:10", gratis: false }, { placa: "PBX 3302", total: 330, metodo: "Tarjeta", serv: "c", hora: "8:40", gratis: false },
+      { placa: "HAB 1290", total: 450, metodo: "Transferencia", serv: "e", hora: "9:15", gratis: false }, { placa: "PCF 8801", total: 150, metodo: "Efectivo", serv: "b", hora: "9:50", gratis: false },
+      { placa: "HDA 4410", total: 0, metodo: "Membresía", serv: "c", hora: "10:20", gratis: true },
+    ],
+    clientes: {
+      "HAB 4521": { cli: "Carlos Mejía", tel: "9876-5432", veh: "pick", sellos: 7 }, "PCD 1187": { cli: "Ana Rodríguez", tel: "9455-1209", veh: "sedan", sellos: 9 },
+      "HBT 9034": { cli: "Transportes López", tel: "3312-7788", veh: "suv", sellos: 3 }, "PDA 5520": { cli: "María Fernández", tel: "8890-4411", veh: "sedan", sellos: 1 },
+      "HCH 2211": { cli: "José Martínez", tel: "9988-0011", veh: "moto", sellos: 4 }, "HDA 4410": { cli: "Lucía Paz", tel: "9711-2233", veh: "sedan", sellos: 0 },
+    },
+    turnos: [{ hora: "13:00", placa: "PBX 3302", cli: "Roberto Aguilar", serv: "e" }, { hora: "14:30", placa: "HDR 7781", cli: "Patricia Reyes", serv: "t" }, { hora: "16:00", placa: "", cli: "Daniela Cruz", serv: "c" }],
+    nuevo: { placa: "", veh: "sedan", serv: "c", extras: [], cli: "", tel: "" },
+  };
+}
+
+/* ======================= VISTAS ======================= */
+let etapaM = 0;
+const minutos = (o) => Math.max(0, ahoraM() - o.entra);
+function tarjeta(o) {
+  const m = minutos(o), tarde = o.etapa < 3 && m > svc(o.serv).min + 15;
+  return `<div class="card tap" onclick="detalle('${o.id}')"><div class="row"><span class="placa">${esc(o.placa)}</span><span class="chip ${tarde ? "c-bad" : "c-brand"} timer">${m} min</span></div>
+    <div style="margin-top:8px"><b>${esc(svc(o.serv).n)}</b>${o.extras.length ? `<span class="muted"> + ${o.extras.map((x) => svc(x).n.toLowerCase()).join(", ")}</span>` : ""}</div>
+    <div class="muted">${esc(o.cli)} · ${veh(o.veh).n} · ${L(precio(o))}</div></div>`;
+}
+const vistas = {
+  cola() {
+    const os = S().ordenes, lav = os.filter((o) => o.etapa === 1 || o.etapa === 2).length;
+    const total = S().hechas.reduce((a, h) => a + h.total, 0);
+    return SANTEC.hero("Cola de lavado", `${lav} de ${BAHIAS} bahías ocupadas · ${os.filter((o) => o.etapa === 0).length} en espera`) + `<main>
+      <div class="stats"><div class="stat hi"><b>${os.length}</b><small>Carros en el local</small></div><div class="stat"><b>${os.filter((o) => o.etapa === 3).length}</b><small>Listos para entregar</small></div>
+        <div class="stat"><b>${S().hechas.length}</b><small>Entregados hoy</small></div><div class="stat"><b>${L(total)}</b><small>Cobrado hoy</small></div></div>
+      <div class="seg only-m">${ETAPAS.map((e, i) => `<button class="${etapaM === i ? "on" : ""}" onclick="etapaM=${i};SANTEC.render()">${e} (${os.filter((o) => o.etapa === i).length})</button>`).join("")}</div>
+      <div class="kan">${ETAPAS.map((e, i) => { const l = os.filter((o) => o.etapa === i).sort((a, b) => a.entra - b.entra);
+        return `<div class="kcol ${etapaM !== i ? "hide" : ""}"><h3>${e} <span class="chip">${l.length}</span></h3><div class="list">${l.map(tarjeta).join("") || `<div class="card empty">Nadie aquí</div>`}</div></div>`; }).join("")}</div>
+      <button class="btn p only-m" onclick="SANTEC.go('#nuevo')">+ Recibir carro</button></main>`;
+  },
+  nuevo() {
+    const n = S().nuevo, c = S().clientes[n.placa.toUpperCase().trim()], p = precio({ ...n, serv: n.serv });
+    const gratis = c && c.sellos >= SELLOS - 1;
+    return SANTEC.hero("Recibir carro", "Registra el lavado en segundos") + `<main><div class="split"><div class="form">
+      <label class="f">Placa<input class="in" id="n_placa" value="${esc(n.placa)}" placeholder="Ej. HAB 1234" style="text-transform:uppercase;font-weight:700;letter-spacing:.06em" oninput="campo('placa',this.value,true)"></label>
+      ${c ? `<div class="card" style="background:var(--brand-s)"><b>Cliente frecuente: ${esc(c.cli)}</b><div class="muted">${esc(c.tel)} · ${veh(c.veh).n}</div>
+        <div class="sellos">${Array.from({ length: SELLOS }, (_, i) => `<i class="${i < c.sellos ? "on" : ""}"></i>`).join("")}</div>
+        <div class="muted" style="margin-top:6px">${gratis ? "🎉 Este lavado le sale <b>gratis</b> (es el número 10)." : `Lleva ${c.sellos} de ${SELLOS}: le faltan ${SELLOS - 1 - c.sellos} para uno gratis.`}</div></div>` : ""}
+      <div class="sec-h"><h2>Vehículo</h2></div><div class="opts wide">${VEHIC.map((v) => `<button type="button" class="opt ${n.veh === v.id ? "sel" : ""}" onclick="campo('veh','${v.id}')"><b>${v.n}</b><small>${v.f === 1 ? "Precio base" : v.f > 1 ? "+" + Math.round((v.f - 1) * 100) + "%" : "-50%"}</small></button>`).join("")}</div>
+      <div class="sec-h"><h2>Servicio</h2></div><div class="opts">${SERVICIOS.filter((s) => s.id !== "m" && s.id !== "t").concat(SERVICIOS.filter((s) => s.id === "t")).map((s) => `<button type="button" class="opt ${n.serv === s.id ? "sel" : ""}" onclick="campo('serv','${s.id}')"><b>${s.n}</b><small>${s.d} · ${L(Math.round(s.p * veh(n.veh).f / 10) * 10)}</small></button>`).join("")}</div>
+      <div class="sec-h"><h2>Extras</h2></div><div class="opts">${["m"].map((x) => `<button type="button" class="opt ${n.extras.includes(x) ? "sel" : ""}" onclick="extra('${x}')"><b>+ ${svc(x).n}</b><small>${L(svc(x).p)}</small></button>`).join("")}</div>
+      </div><div class="sticky"><div class="card form">
+        <label class="f">Nombre del cliente<input class="in" id="n_cli" value="${esc(c ? c.cli : n.cli)}" oninput="campo('cli',this.value,true)"></label>
+        <label class="f">WhatsApp (para avisarle cuando esté listo)<input class="in" id="n_tel" inputmode="tel" value="${esc(c ? c.tel : n.tel)}" placeholder="9999-9999" oninput="campo('tel',this.value,true)"></label>
+        <table class="t"><tr><td>${esc(svc(n.serv).n)} · ${veh(n.veh).n}</td><td class="n">${L(Math.round(svc(n.serv).p * veh(n.veh).f / 10) * 10)}</td></tr>
+          ${n.extras.map((x) => `<tr><td>${svc(x).n}</td><td class="n">${L(svc(x).p)}</td></tr>`).join("")}
+          ${gratis ? `<tr><td>Lavado gratis (membresía)</td><td class="n">-${L(Math.round(svc(n.serv).p * veh(n.veh).f / 10) * 10)}</td></tr>` : ""}
+          <tr class="tot"><td>Total</td><td class="n">${L(gratis ? p - Math.round(svc(n.serv).p * veh(n.veh).f / 10) * 10 : p)}</td></tr></table>
+        <div class="muted">Tiempo estimado: ${svc(n.serv).min + n.extras.reduce((a, x) => a + svc(x).min, 0)} min · se cobra al entregar</div>
+        <button class="btn p" onclick="recibir()">Recibir y poner en la cola</button></div></div></div></main>`;
+  },
+  turnos() {
+    return SANTEC.hero("Turnos de hoy", "Reservados por WhatsApp para no esperar") + `<main><div class="list cols">
+      ${S().turnos.sort((a, b) => mins(a.hora) - mins(b.hora)).map((t, i) => `<div class="card"><div class="row"><b class="f-d" style="font-size:20px;color:var(--brand)">${t.hora}</b>${t.placa ? `<span class="placa">${esc(t.placa)}</span>` : `<span class="chip c-warn">Placa por confirmar</span>`}</div>
+        <div style="margin-top:6px"><b>${esc(t.cli)}</b></div><div class="muted">${esc(svc(t.serv).n)}</div>
+        <div class="btns" style="margin-top:10px"><button class="btn w" onclick="SANTEC.toast('Recordatorio enviado a ${esc(t.cli)}')">Recordar</button><button class="btn p" onclick="llegó(${i})">Ya llegó</button></div></div>`).join("") || `<div class="card empty">No hay turnos pendientes</div>`}
+      </div><div class="card form"><h2 class="f-d" style="font-size:16px">Agregar turno</h2>
+        <div class="btns"><label class="f">Hora<input class="in" id="t_h" type="time" value="15:00" min="7:00" max="18:00"></label><label class="f">Placa<input class="in" id="t_p" placeholder="Opcional" style="text-transform:uppercase"></label></div>
+        <label class="f">Cliente<input class="in" id="t_c" placeholder="Nombre"></label>
+        <label class="f">Servicio<select class="in" id="t_s">${SERVICIOS.map((s) => `<option value="${s.id}">${s.n}</option>`).join("")}</select></label>
+        <button class="btn p" onclick="agregarTurno()">Guardar turno</button></div></main>`;
+  },
+  clientes() {
+    const l = Object.entries(S().clientes).sort((a, b) => b[1].sellos - a[1].sellos);
+    return SANTEC.hero("Membresías", `Cada ${SELLOS} lavados, uno gratis`) + `<main><div class="list cols">${l.map(([placa, c]) => `<div class="card">
+      <div class="row"><span class="placa">${esc(placa)}</span>${c.sellos >= SELLOS - 1 ? `<span class="chip c-ok">Próximo gratis</span>` : `<span class="muted">${c.sellos}/${SELLOS}</span>`}</div>
+      <div style="margin-top:8px"><b>${esc(c.cli)}</b></div><div class="muted">${esc(c.tel)} · ${veh(c.veh).n}</div>
+      <div class="sellos">${Array.from({ length: SELLOS }, (_, i) => `<i class="${i < c.sellos ? "on" : ""}"></i>`).join("")}</div>
+      <button class="btn g" style="margin-top:10px;padding:10px" onclick="SANTEC.toast('Promoción enviada a ${esc(c.cli)} por WhatsApp')">Enviar promoción</button></div>`).join("")}</div></main>`;
+  },
+  caja() {
+    const h = S().hechas, tot = h.reduce((a, x) => a + x.total, 0), pagos = h.filter((x) => !x.gratis);
+    return SANTEC.hero("Caja de hoy", "Lo cobrado al entregar cada carro") + `<main>
+      <div class="stats"><div class="stat hi"><b>${L(tot)}</b><small>Total cobrado</small></div><div class="stat"><b>${h.length}</b><small>Carros entregados</small></div>
+        <div class="stat"><b>${pagos.length ? L(tot / pagos.length) : "—"}</b><small>Ticket promedio</small></div><div class="stat"><b>${h.filter((x) => x.gratis).length}</b><small>Lavados gratis</small></div></div>
+      <div class="split"><div class="card"><h2 class="f-d" style="font-size:16px;margin-bottom:6px">Entregados</h2><table class="t"><tr><th>Hora</th><th>Placa</th><th>Servicio</th><th class="n">Total</th></tr>
+        ${h.slice().reverse().map((x) => `<tr><td>${x.hora}</td><td>${esc(x.placa)}</td><td>${esc(svc(x.serv).n)}<div class="muted">${x.metodo}</div></td><td class="n">${x.gratis ? "Gratis" : L(x.total)}</td></tr>`).join("")}</table></div>
+      <div class="card"><h2 class="f-d" style="font-size:16px;margin-bottom:6px">Por forma de pago</h2><table class="t">
+        ${METODOS.map((m) => `<tr><td>${m}</td><td class="n">${L(h.filter((x) => x.metodo === m).reduce((a, x) => a + x.total, 0))}</td></tr>`).join("")}
+        <tr class="tot"><td>Total</td><td class="n">${L(tot)}</td></tr></table>
+        <button class="btn p" style="margin-top:12px" onclick="SANTEC.toast('Cierre de caja enviado al dueño por WhatsApp')">Cerrar caja del día</button></div></div></main>`;
+  },
+};
+
+/* ======================= ACCIONES ======================= */
+function campo(k, v, sinPintar) {
+  const n = S().nuevo; n[k] = v;
+  if (k === "placa") { const c = S().clientes[v.toUpperCase().trim()]; if (c) { n.veh = c.veh; SANTEC.save(); SANTEC.render();
+    const i = document.getElementById("n_placa"); i.focus(); i.setSelectionRange(v.length, v.length); return; } }
+  SANTEC.save(); if (!sinPintar) SANTEC.render();
+}
+function extra(x) { const e = S().nuevo.extras; S().nuevo.extras = e.includes(x) ? e.filter((y) => y !== x) : [...e, x]; SANTEC.save(); SANTEC.render(); }
+function recibir() {
+  const n = S().nuevo, placa = n.placa.toUpperCase().replace(/\s+/g, " ").trim();
+  const c = S().clientes[placa], cli = (c ? c.cli : n.cli).trim(), tel = (c ? c.tel : n.tel).trim();
+  if (!/^[A-Z]{2,3}\s?\d{3,4}$/.test(placa)) return SANTEC.toast("Escribe una placa válida, por ejemplo HAB 1234");
+  if (S().ordenes.some((o) => o.placa === placa)) return SANTEC.toast("Ese carro ya está en la cola");
+  if (!cli) return SANTEC.toast("Escribe el nombre del cliente");
+  S().ordenes.push({ id: Math.random().toString(36).slice(2, 9), placa, veh: n.veh, serv: n.serv, extras: n.extras.slice(), cli, tel, etapa: 0, entra: ahoraM(), fin: null, metodo: null, gratis: !!(c && c.sellos >= SELLOS - 1) });
+  if (!c) S().clientes[placa] = { cli, tel, veh: n.veh, sellos: 0 };
+  S().nuevo = { placa: "", veh: "sedan", serv: "c", extras: [], cli: "", tel: "" };
+  SANTEC.save(); SANTEC.toast(`${placa} en espera${tel ? " · comprobante enviado por WhatsApp" : ""}`); etapaM = 0; SANTEC.go("#cola");
+}
+function detalle(id) {
+  const o = S().ordenes.find((x) => x.id === id), lav = S().ordenes.filter((x) => x.etapa === 1 || x.etapa === 2).length;
+  const total = o.gratis ? precio(o) - Math.round(svc(o.serv).p * veh(o.veh).f / 10) * 10 : precio(o);
+  const acc = o.etapa === 0 ? (lav >= BAHIAS ? `<div class="card" style="background:var(--warn-s);color:var(--warn)">Las ${BAHIAS} bahías están ocupadas. Pasa otro carro a "Listo" para liberar una.</div>` : `<button class="btn p" onclick="avanzar('${id}')">Empezar a lavar</button>`)
+    : o.etapa === 1 ? `<button class="btn p" onclick="avanzar('${id}')">Pasar a secado y detalle</button>`
+    : o.etapa === 2 ? `<button class="btn w" onclick="avanzar('${id}')">Listo · avisar por WhatsApp</button>`
+    : total === 0 ? `<button class="btn p" onclick="entregar('${id}','Membresía')">Entregar (lavado gratis)</button>`
+    : `<div class="muted" style="font-weight:600">Cobrar ${L(total)} y entregar:</div><div class="btns" style="grid-template-columns:repeat(3,1fr)">${METODOS.map((m) => `<button class="btn g" onclick="entregar('${id}','${m}')">${m}</button>`).join("")}</div>`;
+  SANTEC.sheet(`<h3><span class="placa">${esc(o.placa)}</span> ${esc(o.cli)}</h3><div class="form"><div class="card">
+    <div class="row"><span class="muted">Etapa</span><b>${ETAPAS[o.etapa]}</b></div><div class="row" style="margin-top:6px"><span class="muted">Servicio</span><b>${esc(svc(o.serv).n)}${o.extras.length ? " + motor" : ""}</b></div>
+    <div class="row" style="margin-top:6px"><span class="muted">Vehículo</span><b>${veh(o.veh).n}</b></div><div class="row" style="margin-top:6px"><span class="muted">En el local</span><b>${minutos(o)} min</b></div>
+    <div class="row" style="margin-top:6px"><span class="muted">Total</span><b>${o.gratis ? "Gratis por membresía" : L(total)}</b></div></div>${acc}
+    ${o.etapa < 3 ? `<button class="btn bad" onclick="quitar('${id}')">Cancelar (se fue sin lavar)</button>` : ""}</div>`);
+}
+function avanzar(id) {
+  const o = S().ordenes.find((x) => x.id === id); o.etapa++;
+  SANTEC.save(); SANTEC.cerrar(); SANTEC.render();
+  SANTEC.toast(o.etapa === 3 ? (o.tel ? `Aviso enviado a ${o.cli}: "Tu carro ${o.placa} está listo 🚗✨"` : `${o.placa} listo (sin WhatsApp para avisar)`) : `${o.placa}: ${ETAPAS[o.etapa].toLowerCase()}`);
+}
+function entregar(id, metodo) {
+  const o = S().ordenes.find((x) => x.id === id), base = Math.round(svc(o.serv).p * veh(o.veh).f / 10) * 10;
+  const total = o.gratis ? precio(o) - base : precio(o), c = S().clientes[o.placa];
+  S().hechas.push({ placa: o.placa, total, metodo: total === 0 ? "Membresía" : metodo, serv: o.serv, hora: ahora(), gratis: o.gratis && total === 0 });
+  if (c) c.sellos = o.gratis ? 0 : Math.min(SELLOS - 1, c.sellos + 1);
+  S().ordenes = S().ordenes.filter((x) => x.id !== id); SANTEC.save(); SANTEC.cerrar(); SANTEC.render();
+  SANTEC.toast(o.gratis ? `${o.placa} entregado · membresía reiniciada` : `${o.placa} entregado · ${L(total)} en ${metodo.toLowerCase()} · sello ${c ? c.sellos : 1}/${SELLOS}`);
+}
+function quitar(id) { S().ordenes = S().ordenes.filter((x) => x.id !== id); SANTEC.save(); SANTEC.cerrar(); SANTEC.render(); SANTEC.toast("Orden cancelada"); }
+function llegó(i) { const t = S().turnos.sort((a, b) => mins(a.hora) - mins(b.hora))[i]; S().nuevo = { placa: t.placa, veh: S().clientes[t.placa]?.veh || "sedan", serv: t.serv, extras: [], cli: t.cli, tel: "" }; S().turnos.splice(i, 1); SANTEC.save(); SANTEC.go("#nuevo"); }
+function agregarTurno() {
+  const h = document.getElementById("t_h").value, c = document.getElementById("t_c").value.trim();
+  if (!h || !c) return SANTEC.toast("Escribe la hora y el nombre");
+  S().turnos.push({ hora: h.replace(/^0/, ""), placa: document.getElementById("t_p").value.toUpperCase().trim(), cli: c, serv: document.getElementById("t_s").value });
+  SANTEC.save(); SANTEC.render(); SANTEC.toast(`Turno guardado a las ${h} · confirmación enviada`);
+}
+
+SantecApp({
+  id: "lavafacil", titulo: "LavaFácil — Carwash", nombre: "Lava<span>Fácil</span>", negocio: "Autolavado Brillo Total", pill: "Brillo Total",
+  tabs: [["cola", "Cola", "drop"], ["nuevo", "Recibir", "plus"], ["turnos", "Turnos", "agenda"], ["clientes", "Membresías", "card"], ["caja", "Caja", "cash"]],
+  badges: { cola: () => SANTEC.S.ordenes.filter((o) => o.etapa === 3).length },
+  vistas, semilla,
+});
+setInterval(() => { if ((location.hash || "#cola").startsWith("#cola") && !document.body.classList.contains("sheet-open")) SANTEC.render(); }, 30000);
+</script>
+</body>
+</html>

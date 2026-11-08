@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#C2410C">
+<title>MesaLista — Bares y restaurantes</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+:root{--brand:#C2410C;--brand2:#FDBA74;--brand-s:#FFEDD5;--brand-ink:#fff;--hero:linear-gradient(150deg,#C2410C,#7C2D12)}
+.piso{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mesa{aspect-ratio:1;border-radius:18px;border:2px solid var(--line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;
+  transition:transform .2s var(--ease),border-color .2s;padding:6px;text-align:center}
+.mesa:active{transform:scale(.96)}
+.mesa b{font-family:"Space Grotesk",sans-serif;font-size:22px}
+.mesa small{font-size:11px;color:var(--soft)}
+.mesa.oc{border-color:var(--brand);background:var(--brand-s)}
+.mesa.ok{border-color:#16A34A;background:var(--ok-s)}
+.mesa.cu{border-color:#7C3AED;background:#EDE9FE}
+.mesa.sel{box-shadow:0 0 0 3px var(--ink)}
+.mesa.barra{aspect-ratio:auto;padding:14px 6px}
+.item{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.menu-b{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px;text-align:left;cursor:pointer}
+.menu-b:disabled{opacity:.4;text-decoration:line-through;cursor:not-allowed}
+.menu-b b{display:block;font-size:13px}.menu-b small{color:var(--soft);font-size:12px}
+.kds{display:grid;gap:12px}
+.coma h4{display:flex;justify-content:space-between;font-size:15px;margin-bottom:6px}
+@media (min-width:900px){.piso{grid-template-columns:repeat(4,1fr)}.kds{grid-template-columns:1fr 1fr;align-items:start}.menu-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:899px){.con-mesa .piso-wrap{display:none}.sin-mesa .panel{display:none}.kcol.hide{display:none}}
+</style>
+</head>
+<body>
+<script src="../_kit/kit.js"></script>
+<script>
+/* ======================= DATOS ======================= */
+const MENU = [
+  { id: "a1", cat: "Entradas", n: "Anafre de frijoles", p: 160, est: "Cocina" }, { id: "a2", cat: "Entradas", n: "Tajadas con carne", p: 140, est: "Cocina" },
+  { id: "a3", cat: "Entradas", n: "Ceviche de camarón", p: 220, est: "Cocina" },
+  { id: "f1", cat: "Platos", n: "Plato típico", p: 210, est: "Cocina" }, { id: "f2", cat: "Platos", n: "Pinchos de res", p: 260, est: "Cocina" },
+  { id: "f3", cat: "Platos", n: "Pescado frito", p: 320, est: "Cocina" }, { id: "f4", cat: "Platos", n: "Hamburguesa de la casa", p: 190, est: "Cocina" },
+  { id: "b1", cat: "Bebidas", n: "Refresco natural", p: 45, est: "Barra" }, { id: "b2", cat: "Bebidas", n: "Agua", p: 30, est: "Barra" },
+  { id: "c1", cat: "Cervezas", n: "Cerveza nacional", p: 55, est: "Barra" }, { id: "c2", cat: "Cervezas", n: "Cerveza importada", p: 80, est: "Barra" },
+  { id: "k1", cat: "Cócteles", n: "Margarita", p: 140, est: "Barra" }, { id: "k2", cat: "Cócteles", n: "Mojito", p: 130, est: "Barra" },
+  { id: "p1", cat: "Postres", n: "Pastel tres leches", p: 90, est: "Cocina" },
+];
+const MESEROS = ["Luis", "Carla"];
+const ISV = 0.15, PROPINA = 0.10;
+const METODOS = ["Efectivo", "Tarjeta", "Transferencia"];
+const EST_ITEM = { nuevo: ["Sin enviar", "c-warn"], enviado: ["Preparando", "c-info"], listo: ["Listo para servir", "c-ok"], servido: ["Servido", ""] };
+const S = () => SANTEC.S;
+const prod = (id) => S().menu.find((m) => m.id === id);
+const ahoraM = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
+
+function semilla() {
+  const t = ahoraM(), it = (pid, cant, estado, hace, nota = "") => ({ uid: Math.random().toString(36).slice(2, 9), pid, cant, estado, envio: estado === "nuevo" ? null : t - hace, nota });
+  const mesas = {};
+  ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Barra 1", "Barra 2"].forEach((m) => (mesas[m] = { items: [], mesero: "Luis", abre: null, cuenta: false }));
+  Object.assign(mesas["2"], { mesero: "Carla", abre: t - 40, items: [it("a1", 1, "servido", 35), it("f1", 2, "listo", 22), it("c1", 3, "servido", 35)] });
+  Object.assign(mesas["4"], { mesero: "Luis", abre: t - 15, items: [it("a3", 1, "enviado", 8, "sin cebolla"), it("k1", 2, "enviado", 8), it("f3", 1, "enviado", 6)] });
+  Object.assign(mesas["7"], { mesero: "Carla", abre: t - 70, cuenta: true, items: [it("f2", 2, "servido", 60), it("b1", 2, "servido", 65), it("p1", 2, "servido", 20)] });
+  Object.assign(mesas["Barra 1"], { mesero: "Luis", abre: t - 5, items: [it("c2", 2, "nuevo", 0)] });
+  return {
+    menu: MENU.map((m) => ({ ...m, agotado: false })), mesas, cat: "Entradas", estM: "Cocina",
+    ventas: [
+      { mesa: "5", hora: "12:40", mesero: "Luis", sub: 690, prop: 69, met: "Tarjeta", items: [["f1", 2], ["b1", 2], ["p1", 1]] },
+      { mesa: "1", hora: "13:15", mesero: "Carla", sub: 920, prop: 92, met: "Efectivo", items: [["f2", 2], ["c1", 4], ["a2", 1]] },
+      { mesa: "Barra 2", hora: "14:05", mesero: "Luis", sub: 390, prop: 0, met: "Transferencia", items: [["k2", 3]] },
+    ],
+  };
+}
+
+/* ======================= LÓGICA ======================= */
+const sub = (m) => m.items.reduce((a, i) => a + prod(i.pid).p * i.cant, 0);
+function estadoMesa(m) {
+  if (!m.items.length) return ["", "Libre"];
+  if (m.cuenta) return ["cu", "Pidió la cuenta"];
+  if (m.items.some((i) => i.estado === "listo")) return ["ok", "Platos listos"];
+  return ["oc", "Ocupada"];
+}
+const pendientesCocina = () => Object.entries(S().mesas).reduce((a, [, m]) => a + m.items.filter((i) => i.estado === "enviado").length, 0);
+
+/* ======================= VISTAS ======================= */
+let pedirCat = null;
+function panelMesa(id) {
+  const m = S().mesas[id]; if (!m) return "";
+  const cats = [...new Set(S().menu.map((x) => x.cat))], cat = pedirCat || cats[0];
+  const nuevos = m.items.filter((i) => i.estado === "nuevo");
+  return `<div class="card form"><div class="row"><h2 class="f-d" style="font-size:20px">${/^\d/.test(id) ? "Mesa " + id : id}</h2>
+      <select class="in" style="width:auto;padding:7px 10px" aria-label="Mesero" onchange="S().mesas['${id}'].mesero=this.value;SANTEC.save()">${MESEROS.map((x) => `<option ${m.mesero === x ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+    ${m.abre != null ? `<div class="muted">Abierta hace ${Math.max(0, ahoraM() - m.abre)} min · ${estadoMesa(m)[1]}</div>` : `<div class="muted">Mesa libre: agrega productos para abrirla.</div>`}
+    <div>${m.items.map((i) => { const p = prod(i.pid), e = EST_ITEM[i.estado];
+      return `<div class="item"><div><b>${i.cant} × ${esc(p.n)}</b>${i.nota ? `<div class="muted">Nota: ${esc(i.nota)}</div>` : ""}<div style="margin-top:4px"><span class="chip ${e[1]}">${e[0]}</span> <span class="muted">${p.est}</span></div></div>
+        <div style="text-align:right"><b>${L(p.p * i.cant)}</b><div style="margin-top:6px">${i.estado === "nuevo" ? `<span class="qty"><button onclick="cant('${id}','${i.uid}',-1)" aria-label="Quitar uno">−</button><button onclick="cant('${id}','${i.uid}',1)" aria-label="Agregar uno">+</button></span>`
+          : i.estado === "listo" ? `<button class="btn g" style="padding:6px 10px;font-size:13px" onclick="servir('${id}','${i.uid}')">Servir</button>` : ""}</div></div></div>`; }).join("") || ""}</div>
+    ${m.items.length ? `<div class="row"><span class="muted">Subtotal</span><b>${L(sub(m))}</b></div>` : ""}
+    ${nuevos.length ? `<button class="btn p" onclick="enviar('${id}')">Enviar a cocina y barra (${nuevos.reduce((a, i) => a + i.cant, 0)})</button>` : ""}
+    <div class="sec-h"><h2>Agregar</h2></div>
+    <div class="seg">${cats.map((c) => `<button class="${c === cat ? "on" : ""}" onclick="pedirCat='${c}';SANTEC.render()">${c}</button>`).join("")}</div>
+    <div class="menu-grid">${S().menu.filter((x) => x.cat === cat).map((x) => `<button class="menu-b" ${x.agotado ? "disabled" : ""} onclick="agregar('${id}','${x.id}')"><b>${esc(x.n)}</b><small>${x.agotado ? "Agotado" : L(x.p)}</small></button>`).join("")}</div>
+    ${m.items.length ? `<div class="btns"><button class="btn g" onclick="cuenta('${id}')">Cuenta y cobro</button><button class="btn g" onclick="S().mesas['${id}'].cuenta=!S().mesas['${id}'].cuenta;SANTEC.save();SANTEC.render()">${m.cuenta ? "Quitar «pidió cuenta»" : "Pidió la cuenta"}</button></div>` : ""}</div>`;
+}
+const vistas = {
+  mesas(id) {
+    const ms = Object.entries(S().mesas), oc = ms.filter(([, m]) => m.items.length);
+    const abierto = oc.reduce((a, [, m]) => a + sub(m), 0), vendido = S().ventas.reduce((a, v) => a + v.sub, 0);
+    return SANTEC.hero("Mesas", `${oc.length} de ${ms.length} ocupadas · ${pendientesCocina()} platos y bebidas preparándose`) + `<main class="${id ? "con-mesa" : "sin-mesa"}">
+      <div class="stats only-d"><div class="stat hi"><b>${oc.length}</b><small>Mesas ocupadas</small></div><div class="stat"><b>${L(abierto)}</b><small>Cuentas abiertas</small></div>
+        <div class="stat"><b>${L(vendido)}</b><small>Vendido hoy</small></div><div class="stat"><b>${ms.filter(([, m]) => m.cuenta).length}</b><small>Piden la cuenta</small></div></div>
+      ${id ? `<button class="btn g only-m" onclick="SANTEC.go('#mesas')">← Todas las mesas</button>` : ""}
+      <div class="split"><div class="piso-wrap"><div class="piso">${ms.map(([k, m]) => { const e = estadoMesa(m);
+        return `<button class="mesa ${e[0]} ${k.startsWith("Barra") ? "barra" : ""} ${k === id ? "sel" : ""}" onclick="SANTEC.go('#mesas/${encodeURIComponent(k)}')"><b>${k.startsWith("Barra") ? k : k}</b><small>${e[1]}</small>${m.items.length ? `<small><b style="font-size:13px;font-family:Inter">${L(sub(m))}</b></small>` : ""}</button>`; }).join("")}</div>
+        <div class="muted" style="margin-top:10px">Verde: platos listos para servir · Morado: pidió la cuenta</div></div>
+      <div class="panel sticky">${id ? panelMesa(decodeURIComponent(id)) : `<div class="card empty only-d">Toca una mesa para ver su orden</div>`}</div></div></main>`;
+  },
+  cocina() {
+    const comandas = (est) => Object.entries(S().mesas).map(([k, m]) => ({ k, m, l: m.items.filter((i) => i.estado === "enviado" && prod(i.pid).est === est) })).filter((x) => x.l.length)
+      .sort((a, b) => Math.min(...a.l.map((i) => i.envio)) - Math.min(...b.l.map((i) => i.envio)));
+    const col = (est) => { const cs = comandas(est);
+      return `<div class="kcol ${S().estM !== est ? "hide" : ""}"><div class="sec-h" style="margin-bottom:8px"><h2>${est}</h2><span class="chip">${cs.reduce((a, c) => a + c.l.length, 0)} pendientes</span></div><div class="list">
+        ${cs.map(({ k, m, l }) => { const espera = ahoraM() - Math.min(...l.map((i) => i.envio));
+          return `<div class="card coma"><h4><span>${/^\d/.test(k) ? "Mesa " + k : k} · ${m.mesero}</span><span class="chip ${espera > 15 ? "c-bad" : "c-info"}">${espera} min</span></h4>
+          ${l.map((i) => `<div class="row" style="padding:6px 0;border-top:1px solid var(--line)"><div><b>${i.cant} × ${esc(prod(i.pid).n)}</b>${i.nota ? `<div class="muted">⚠ ${esc(i.nota)}</div>` : ""}</div><button class="btn g" style="width:auto;padding:7px 12px;font-size:13px" onclick="listo('${k}','${i.uid}')">Listo</button></div>`).join("")}
+          ${l.length > 1 ? `<button class="btn p" style="margin-top:8px;padding:10px" onclick="todoListo('${k}','${est}')">Todo listo</button>` : ""}</div>`; }).join("") || `<div class="card empty">Nada pendiente 👌</div>`}</div></div>`; };
+    return SANTEC.hero("Cocina y barra", "Las comandas llegan aquí apenas el mesero las envía") + `<main>
+      <div class="seg only-m">${["Cocina", "Barra"].map((e) => `<button class="${S().estM === e ? "on" : ""}" onclick="S().estM='${e}';SANTEC.save();SANTEC.render()">${e}</button>`).join("")}</div>
+      <div class="kds">${col("Cocina")}${col("Barra")}</div></main>`;
+  },
+  caja() {
+    const v = S().ventas, subt = v.reduce((a, x) => a + x.sub, 0), isv = subt * ISV, prop = v.reduce((a, x) => a + x.prop, 0);
+    const top = {}; v.forEach((x) => x.items.forEach(([p, c]) => (top[p] = (top[p] || 0) + c)));
+    const mx = Math.max(1, ...Object.values(top));
+    return SANTEC.hero("Caja de hoy", `${v.length} cuentas cobradas`) + `<main>
+      <div class="stats"><div class="stat hi"><b>${L(subt + isv)}</b><small>Ventas con ISV</small></div><div class="stat"><b>${L(isv)}</b><small>ISV 15 %</small></div>
+        <div class="stat"><b>${L(prop)}</b><small>Propinas</small></div><div class="stat"><b>${v.length ? L((subt + isv) / v.length) : "—"}</b><small>Cuenta promedio</small></div></div>
+      <div class="split"><div class="card"><h2 class="f-d" style="font-size:16px;margin-bottom:6px">Cuentas cobradas</h2><table class="t"><tr><th>Hora</th><th>Mesa</th><th>Mesero</th><th class="n">Total</th></tr>
+        ${v.slice().reverse().map((x) => `<tr><td>${x.hora}</td><td>${esc(x.mesa)}</td><td>${x.mesero}<div class="muted">${x.met}</div></td><td class="n">${L(x.sub * (1 + ISV) + x.prop)}</td></tr>`).join("")}</table></div>
+      <div class="form"><div class="card"><h2 class="f-d" style="font-size:16px;margin-bottom:6px">Por mesero</h2><table class="t">${MESEROS.map((m) => { const l = v.filter((x) => x.mesero === m);
+        return `<tr><td>${m}<div class="muted">${l.length} cuentas · propinas ${L(l.reduce((a, x) => a + x.prop, 0))}</div></td><td class="n">${L(l.reduce((a, x) => a + x.sub, 0))}</td></tr>`; }).join("")}</table></div>
+      <div class="card"><h2 class="f-d" style="font-size:16px;margin-bottom:8px">Lo más vendido</h2>${Object.entries(top).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([p, c]) => `<div style="margin-bottom:8px"><div class="row"><span>${esc(prod(p).n)}</span><b>${c}</b></div><div class="bar"><i style="width:${c / mx * 100}%"></i></div></div>`).join("")}</div>
+      <button class="btn p" onclick="SANTEC.toast('Cierre de caja enviado al dueño por WhatsApp')">Cerrar caja del día</button></div></div></main>`;
+  },
+  menu() {
+    const cats = [...new Set(S().menu.map((x) => x.cat))];
+    return SANTEC.hero("Menú", "Marca lo agotado y desaparece de los pedidos") + `<main><div class="list cols">${cats.map((c) => `<div class="card"><h2 class="f-d" style="font-size:16px;margin-bottom:4px">${c}</h2><table class="t">
+      ${S().menu.filter((x) => x.cat === c).map((x) => `<tr><td>${esc(x.n)}<div class="muted">${x.est}</div></td><td class="n">${L(x.p)}</td><td class="n"><button class="chip ${x.agotado ? "c-bad" : "c-ok"}" style="border:0;cursor:pointer" onclick="agotar('${x.id}')">${x.agotado ? "Agotado" : "Disponible"}</button></td></tr>`).join("")}</table></div>`).join("")}</div></main>`;
+  },
+};
+
+/* ======================= ACCIONES ======================= */
+function agregar(id, pid) {
+  const m = S().mesas[id], ya = m.items.find((i) => i.pid === pid && i.estado === "nuevo");
+  if (ya) ya.cant++; else m.items.push({ uid: Math.random().toString(36).slice(2, 9), pid, cant: 1, estado: "nuevo", envio: null, nota: "" });
+  if (m.abre == null) m.abre = ahoraM();
+  SANTEC.save(); SANTEC.render();
+}
+function cant(id, uid, d) { const m = S().mesas[id], i = m.items.find((x) => x.uid === uid); i.cant += d; if (i.cant <= 0) m.items = m.items.filter((x) => x !== i); if (!m.items.length) { m.abre = null; m.cuenta = false; } SANTEC.save(); SANTEC.render(); }
+function enviar(id) {
+  const m = S().mesas[id], n = m.items.filter((i) => i.estado === "nuevo");
+  n.forEach((i) => { i.estado = "enviado"; i.envio = ahoraM(); });
+  const c = n.filter((i) => prod(i.pid).est === "Cocina").reduce((t, i) => t + i.cant, 0), b = n.reduce((t, i) => t + i.cant, 0) - c;
+  SANTEC.save(); SANTEC.render(); SANTEC.toast(`Comanda enviada${c ? ` · ${c} a cocina` : ""}${b ? ` · ${b} a barra` : ""}`);
+}
+function listo(k, uid) { const i = S().mesas[k].items.find((x) => x.uid === uid); i.estado = "listo"; SANTEC.save(); SANTEC.render(); SANTEC.toast(`${/^\d/.test(k) ? "Mesa " + k : k}: ${prod(i.pid).n} listo para servir`); }
+function todoListo(k, est) { S().mesas[k].items.forEach((i) => { if (i.estado === "enviado" && prod(i.pid).est === est) i.estado = "listo"; }); SANTEC.save(); SANTEC.render(); SANTEC.toast(`${/^\d/.test(k) ? "Mesa " + k : k}: todo listo para servir`); }
+function servir(id, uid) { S().mesas[id].items.find((x) => x.uid === uid).estado = "servido"; SANTEC.save(); SANTEC.render(); }
+function agotar(pid) { const p = prod(pid); p.agotado = !p.agotado; SANTEC.save(); SANTEC.render(); SANTEC.toast(`${p.n}: ${p.agotado ? "agotado" : "disponible"}`); }
+let partes = 1, conPropina = true;
+function cuenta(id) {
+  const m = S().mesas[id], s = sub(m), isv = s * ISV, prop = conPropina ? s * PROPINA : 0, tot = s + isv + prop;
+  const sinServir = m.items.filter((i) => i.estado !== "servido").reduce((a, i) => a + i.cant, 0);
+  SANTEC.sheet(`<h3>Cuenta · ${/^\d/.test(id) ? "Mesa " + id : id}</h3><div class="form">
+    ${sinServir ? `<div class="card" style="background:var(--warn-s);color:var(--warn)">Hay ${sinServir} producto${sinServir === 1 ? "" : "s"} sin servir o sin enviar. Revísalo antes de cobrar.</div>` : ""}
+    <div class="card"><table class="t">${m.items.map((i) => `<tr><td>${i.cant} × ${esc(prod(i.pid).n)}</td><td class="n">${L(prod(i.pid).p * i.cant)}</td></tr>`).join("")}
+      <tr><td>Subtotal</td><td class="n">${L(s)}</td></tr><tr><td>ISV 15 %</td><td class="n">${L(isv)}</td></tr>
+      <tr><td><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${conPropina ? "checked" : ""} onchange="conPropina=this.checked;cuenta('${id}')"> Propina sugerida 10 %</label></td><td class="n">${L(prop)}</td></tr>
+      <tr class="tot"><td>Total</td><td class="n">${L(tot)}</td></tr></table></div>
+    <div class="row"><span style="font-weight:600">Dividir entre</span><span class="qty"><button onclick="partes=Math.max(1,partes-1);cuenta('${id}')" aria-label="Menos personas">−</button><b>${partes}</b><button onclick="partes=Math.min(20,partes+1);cuenta('${id}')" aria-label="Más personas">+</button></span></div>
+    ${partes > 1 ? `<div class="card" style="background:var(--brand-s)"><b>${L(tot / partes)}</b> por persona (${partes} personas)</div>` : ""}
+    <div class="muted" style="font-weight:600">Cobrar con:</div><div class="btns" style="grid-template-columns:repeat(3,1fr)">${METODOS.map((x) => `<button class="btn g" onclick="cobrar('${id}','${x}')">${x}</button>`).join("")}</div>
+    <button class="btn w" onclick="SANTEC.toast('Cuenta enviada por WhatsApp al cliente')">Enviar cuenta por WhatsApp</button></div>`);
+}
+function cobrar(id, met) {
+  const m = S().mesas[id], s = sub(m), prop = conPropina ? Math.round(s * PROPINA) : 0;
+  S().ventas.push({ mesa: id, hora: ahora(), mesero: m.mesero, sub: s, prop, met, items: m.items.map((i) => [i.pid, i.cant]) });
+  S().mesas[id] = { items: [], mesero: m.mesero, abre: null, cuenta: false };
+  partes = 1; conPropina = true; SANTEC.save(); SANTEC.cerrar(); SANTEC.go("#mesas");
+  SANTEC.toast(`${/^\d/.test(id) ? "Mesa " + id : id} cobrada: ${L(s * (1 + ISV) + prop)} en ${met.toLowerCase()} · mesa libre`);
+}
+
+SantecApp({
+  id: "mesalista", titulo: "MesaLista — Bares y restaurantes", nombre: "Mesa<span>Lista</span>", negocio: "Restaurante y Bar El Fogón", pill: "El Fogón",
+  tabs: [["mesas", "Mesas", "table"], ["cocina", "Cocina", "fire"], ["caja", "Caja", "chart"], ["menu", "Menú", "menu"]],
+  badges: { cocina: () => pendientesCocina() },
+  vistas, semilla,
+});
+setInterval(() => { if (/^#?(cocina)?$/.test(location.hash.replace("#", "")) || location.hash.startsWith("#cocina")) { if (!document.body.classList.contains("sheet-open")) SANTEC.render(); } }, 30000);
+</script>
+</body>
+</html>

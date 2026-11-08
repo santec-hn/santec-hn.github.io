@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#BE185D">
+<title>TuTurno — Salones, barberías y spas</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+:root{--brand:#BE185D;--brand2:#FBCFE8;--brand-s:#FCE7F3;--brand-ink:#fff;--hero:linear-gradient(150deg,#BE185D,#831843)}
+.cita{display:grid;grid-template-columns:54px 1fr;gap:12px;align-items:start}
+.cita .h{font-family:"Space Grotesk",sans-serif;font-weight:700;color:var(--brand);padding-top:2px}
+.cita .h small{display:block;font-family:Inter,sans-serif;font-weight:500;color:var(--soft);font-size:11px}
+.prof{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--soft)}
+.prof i{width:9px;height:9px;border-radius:50%}
+.pcols{display:grid;gap:10px}
+.pcol h3{display:flex;align-items:center;gap:8px;font-size:14px;margin:0 2px 8px}
+.pcol h3 i{width:10px;height:10px;border-radius:50%}
+.st0{border-left:4px solid #F59E0B}.st1{border-left:4px solid #16A34A}.st2{border-left:4px solid var(--brand)}.st3{border-left:4px solid #9CA3AF;opacity:.8}.st4{border-left:4px solid #DC2626;opacity:.6}
+@media (min-width:900px){.pcols{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}.pcol .list{gap:8px}}
+@media (max-width:899px){.pcol h3{display:none}.pcol.hide{display:none}}
+</style>
+</head>
+<body>
+<script src="../_kit/kit.js"></script>
+<script>
+/* ======================= DATOS ======================= */
+const PROFS = [
+  { id: 1, n: "Kevin", rol: "Barbería", color: "#2563EB" },
+  { id: 2, n: "Andrea", rol: "Estilismo", color: "#BE185D" },
+  { id: 3, n: "Sofía", rol: "Uñas y spa", color: "#D97706" },
+];
+const SERVICIOS = [
+  { id: "c1", n: "Corte de caballero", rol: "Barbería", min: 30, p: 150 },
+  { id: "c2", n: "Corte + barba", rol: "Barbería", min: 45, p: 220 },
+  { id: "c3", n: "Arreglo de barba", rol: "Barbería", min: 20, p: 100 },
+  { id: "e1", n: "Corte de dama", rol: "Estilismo", min: 45, p: 300 },
+  { id: "e2", n: "Tinte completo", rol: "Estilismo", min: 120, p: 900 },
+  { id: "e3", n: "Peinado de evento", rol: "Estilismo", min: 45, p: 350 },
+  { id: "u1", n: "Manicure", rol: "Uñas y spa", min: 45, p: 250 },
+  { id: "u2", n: "Pedicure spa", rol: "Uñas y spa", min: 60, p: 300 },
+  { id: "u3", n: "Uñas acrílicas", rol: "Uñas y spa", min: 90, p: 600 },
+];
+const EST = ["Reservada", "Confirmada", "En atención", "Atendida", "No vino"];
+const ESTC = ["c-warn", "c-ok", "c-brand", "", "c-bad"];
+const METODOS = ["Efectivo", "Tarjeta", "Transferencia"];
+const COMISION = 0.4;
+const APERTURA = 8 * 60, CIERRE = 18 * 60, CIERRE_SAB = 16 * 60;
+
+const iso = (d) => d.toISOString().slice(0, 10);
+const hoyD = () => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; };
+const diaN = (k) => { const d = hoyD(); d.setDate(d.getDate() + k); return d; };
+const etiqueta = (f) => { const d = new Date(f + "T12:00:00"); const k = Math.round((d - hoyD()) / 864e5);
+  return k === 0 ? "Hoy" : k === 1 ? "Mañana" : `${DIAS[d.getDay()]} ${d.getDate()}`; };
+const serv = (id) => S().servicios.find((s) => s.id === id);
+const prof = (id) => PROFS.find((p) => p.id === id);
+const S = () => SANTEC.S;
+
+function semilla() {
+  const h = iso(diaN(0)), m = iso(diaN(1));
+  const c = (fecha, p, s, cli, tel, hora, e, met) => ({ id: Math.random().toString(36).slice(2, 9), fecha, prof: p, serv: s, cli, tel, hora: mins(hora), est: e, metodo: met || null });
+  return {
+    servicios: SERVICIOS.map((s) => ({ ...s })),
+    citas: [
+      c(h, 1, "c1", "Luis Mejía", "9876-1122", "8:00", 3, "Efectivo"), c(h, 1, "c2", "Carlos Rivera", "9455-2233", "9:00", 3, "Tarjeta"),
+      c(h, 1, "c1", "Josué Flores", "3312-4455", "10:30", 1), c(h, 1, "c3", "Mario Paz", "8890-6677", "15:00", 0),
+      c(h, 2, "e1", "Daniela Cruz", "9711-8899", "8:30", 3, "Transferencia"), c(h, 2, "e2", "Karla Pineda", "9512-3344", "10:00", 2),
+      c(h, 2, "e3", "Fernanda López", "9988-1100", "14:00", 1),
+      c(h, 3, "u1", "Valeria Castro", "3344-2211", "9:00", 3, "Efectivo"), c(h, 3, "u2", "Paola Reyes", "8877-3322", "11:00", 1),
+      c(h, 3, "u3", "Andrea Zelaya", "9600-4455", "15:30", 0), c(h, 1, "c2", "Héctor Lagos", "9701-5566", "12:00", 4),
+      c(m, 2, "e1", "Sara Molina", "9301-2244", "9:00", 1), c(m, 1, "c2", "Kevin Ordóñez", "9455-7788", "10:00", 0),
+    ],
+    res: { serv: null, prof: 0, dia: 0, hora: null },
+  };
+}
+
+/* ======================= LÓGICA ======================= */
+const delDia = (f) => S().citas.filter((c) => c.fecha === f).sort((a, b) => a.hora - b.hora);
+const ocupa = (c) => c.est !== 4;
+function libre(profId, fecha, ini, dur) {
+  return !S().citas.some((c) => c.prof === profId && c.fecha === fecha && ocupa(c) && ini < c.hora + serv(c.serv).min && c.hora < ini + dur);
+}
+function horasLibres(sid, profSel, fecha) {
+  const s = serv(sid); if (!s) return [];
+  const d = new Date(fecha + "T12:00:00"); if (d.getDay() === 0) return [];
+  const cierre = d.getDay() === 6 ? CIERRE_SAB : CIERRE;
+  const ahoraM = fecha === iso(diaN(0)) ? new Date().getHours() * 60 + new Date().getMinutes() + 15 : 0;
+  const profs = profSel ? [profSel] : PROFS.filter((p) => p.rol === s.rol).map((p) => p.id);
+  const out = [];
+  for (let t = APERTURA; t + s.min <= cierre; t += 30) {
+    const quien = profs.find((p) => libre(p, fecha, t, s.min));
+    out.push({ t, libre: t >= ahoraM && !!quien, quien });
+  }
+  return out;
+}
+const cobradas = (f) => S().citas.filter((c) => c.fecha === f && c.est === 3);
+
+/* ======================= VISTAS ======================= */
+let filtroProf = 0, diaAgenda = 0, buscar = "";
+function tarjetaCita(c) {
+  const s = serv(c.serv), p = prof(c.prof);
+  return `<div class="card tap cita st${c.est}" onclick="detalle('${c.id}')">
+    <div class="h">${hhmm(c.hora)}<small>${s.min} min</small></div>
+    <div><div class="row"><b>${esc(c.cli)}</b><span class="chip ${ESTC[c.est]}">${EST[c.est]}</span></div>
+      <div class="muted">${esc(s.n)} · ${L(s.p)}</div>
+      <div class="prof" style="margin-top:6px"><i style="background:${p.color}"></i>${p.n}</div></div></div>`;
+}
+const vistas = {
+  agenda() {
+    const f = iso(diaN(diaAgenda)), cs = delDia(f), cob = cobradas(f);
+    return SANTEC.hero("Agenda", `${etiqueta(f)} · ${new Date(f + "T12:00:00").getDate()} de ${MESES[new Date(f + "T12:00:00").getMonth()]}`) + `<main>
+      <div class="stats">
+        <div class="stat hi"><b>${cs.filter((c) => c.est !== 4).length}</b><small>Citas</small></div>
+        <div class="stat"><b>${cs.filter((c) => c.est === 1 || c.est === 2).length}</b><small>Confirmadas o en atención</small></div>
+        <div class="stat"><b>${cob.length}</b><small>Atendidas</small></div>
+        <div class="stat"><b>${L(cob.reduce((a, c) => a + serv(c.serv).p, 0))}</b><small>Cobrado</small></div></div>
+      <div class="seg">${[0, 1, 2, 3, 4, 5].map((k) => `<button class="${diaAgenda === k ? "on" : ""}" onclick="diaAgenda=${k};SANTEC.render()">${etiqueta(iso(diaN(k)))}</button>`).join("")}</div>
+      <div class="seg only-m">${[{ id: 0, n: "Todos" }, ...PROFS].map((p) => `<button class="${filtroProf === p.id ? "on" : ""}" onclick="filtroProf=${p.id};SANTEC.render()">${p.n}</button>`).join("")}</div>
+      <div class="pcols">${PROFS.map((p) => { const l = cs.filter((c) => c.prof === p.id);
+        return `<div class="pcol ${filtroProf && filtroProf !== p.id ? "hide" : ""}"><h3><i style="background:${p.color}"></i>${p.n} <span class="muted">· ${p.rol}</span></h3>
+          <div class="list">${l.map(tarjetaCita).join("") || `<div class="card empty">Sin citas</div>`}</div></div>`; }).join("")}</div>
+      <button class="btn p only-m" onclick="SANTEC.go('#reservar')">+ Nueva cita</button></main>`;
+  },
+  reservar() {
+    const r = S().res, s = serv(r.serv), f = iso(diaN(r.dia));
+    const horas = s ? horasLibres(r.serv, r.prof, f) : [];
+    const roles = [...new Set(S().servicios.map((x) => x.rol))];
+    return SANTEC.hero("Reservar cita", "Así reservan tus clientes desde el celular") + `<main><div class="split"><div class="form">
+      <div class="sec-h"><h2>1. Servicio</h2></div>
+      ${roles.map((rol) => `<div class="muted" style="font-weight:600">${rol}</div><div class="opts wide">${S().servicios.filter((x) => x.rol === rol).map((x) =>
+        `<button type="button" class="opt ${r.serv === x.id ? "sel" : ""}" onclick="elegir('serv','${x.id}')"><b>${esc(x.n)}</b><small>${x.min} min · ${L(x.p)}</small></button>`).join("")}</div>`).join("")}
+      ${s ? `<div class="sec-h"><h2>2. Profesional</h2></div><div class="opts wide">
+        <button type="button" class="opt ${!r.prof ? "sel" : ""}" onclick="elegir('prof',0)"><b>Cualquiera</b><small>El primero libre</small></button>
+        ${PROFS.filter((p) => p.rol === s.rol).map((p) => `<button type="button" class="opt ${r.prof === p.id ? "sel" : ""}" onclick="elegir('prof',${p.id})"><b>${p.n}</b><small>${p.rol}</small></button>`).join("")}</div>
+      <div class="sec-h"><h2>3. Día</h2></div>
+      <div class="seg">${[0, 1, 2, 3, 4, 5, 6].map((k) => { const fx = iso(diaN(k)), dom = diaN(k).getDay() === 0;
+        return `<button class="${r.dia === k ? "on" : ""}" ${dom ? "disabled title='Cerrado'" : ""} onclick="elegir('dia',${k})">${etiqueta(fx)}${dom ? " · cerrado" : ""}</button>`; }).join("")}</div>
+      <div class="sec-h"><h2>4. Hora</h2><span class="muted">${diaN(r.dia).getDay() === 6 ? "Sábado hasta las 4:00 p. m." : "8:00 a. m. a 6:00 p. m."}</span></div>
+      ${horas.length ? `<div class="grid-t">${horas.map((h) => `<button type="button" class="slot-b ${r.hora === h.t ? "sel" : ""}" ${h.libre ? "" : "disabled"} onclick="elegir('hora',${h.t})">${hhmm(h.t)}</button>`).join("")}</div>` : `<div class="card empty">Cerrado este día</div>`}` : `<div class="card empty">Elige un servicio para ver profesionales y horarios</div>`}
+      </div><div class="sticky"><div class="card form">
+        <h2 class="f-d" style="font-size:17px">Tus datos</h2>
+        <label class="f">Nombre<input class="in" id="r_n" autocomplete="name" placeholder="Ej. María López"></label>
+        <label class="f">WhatsApp<input class="in" id="r_t" inputmode="tel" placeholder="9999-9999"></label>
+        <div class="muted">${s && r.hora != null ? `<b>${esc(s.n)}</b> · ${etiqueta(f)} a las ${hhmm(r.hora)} · ${L(s.p)}` : "Elige servicio, día y hora."}</div>
+        <button class="btn p" ${s && r.hora != null ? "" : "disabled"} onclick="confirmar()">Confirmar cita</button>
+        <div class="muted" style="text-align:center">Te llega un recordatorio por WhatsApp un día antes.</div></div></div></div></main>`;
+  },
+  clientes() {
+    const mapa = {};
+    S().citas.forEach((c) => { const k = c.tel; (mapa[k] ||= { n: c.cli, tel: c.tel, citas: [] }).citas.push(c); });
+    let l = Object.values(mapa).map((x) => ({ ...x, at: x.citas.filter((c) => c.est === 3), ult: x.citas.slice().sort((a, b) => (b.fecha + hhmm(b.hora)).localeCompare(a.fecha + hhmm(a.hora)))[0] }));
+    if (buscar) l = l.filter((x) => (x.n + " " + x.tel).toLowerCase().includes(buscar.toLowerCase()));
+    l.sort((a, b) => b.at.length - a.at.length || a.n.localeCompare(b.n));
+    return SANTEC.hero("Clientes", `${Object.keys(mapa).length} clientes registrados`) + `<main>
+      <input class="in" placeholder="Buscar por nombre o teléfono" value="${esc(buscar)}" oninput="buscar=this.value;pintarClientes()" id="bq" aria-label="Buscar cliente">
+      <div class="list cols" id="lc">${l.map((x) => `<div class="card tap row" onclick="fichaCliente('${esc(x.tel)}')"><div style="display:flex;gap:12px;align-items:center">
+        <div class="av">${iniciales(x.n)}</div><div><b>${esc(x.n)}</b><div class="muted">${esc(x.tel)} · ${x.at.length} visita${x.at.length === 1 ? "" : "s"}</div></div></div>
+        <span class="muted">${esc(serv(x.ult.serv).n)}</span></div>`).join("") || `<div class="card empty">Sin resultados</div>`}</div></main>`;
+  },
+  caja() {
+    const f = iso(diaN(0)), cob = cobradas(f), tot = cob.reduce((a, c) => a + serv(c.serv).p, 0);
+    return SANTEC.hero("Caja de hoy", "Solo cuenta las citas atendidas y cobradas") + `<main>
+      <div class="stats"><div class="stat hi"><b>${L(tot)}</b><small>Total cobrado</small></div><div class="stat"><b>${cob.length}</b><small>Servicios</small></div>
+        <div class="stat"><b>${cob.length ? L(tot / cob.length) : "—"}</b><small>Ticket promedio</small></div><div class="stat"><b>${L(tot * (1 - COMISION))}</b><small>Queda para el negocio</small></div></div>
+      <div class="split"><div class="card"><h2 class="f-d" style="font-size:16px;margin-bottom:6px">Por profesional</h2><table class="t">
+        <tr><th>Profesional</th><th class="n">Servicios</th><th class="n">Vendido</th><th class="n">Comisión ${COMISION * 100}%</th></tr>
+        ${PROFS.map((p) => { const l = cob.filter((c) => c.prof === p.id), v = l.reduce((a, c) => a + serv(c.serv).p, 0);
+          return `<tr><td>${p.n}</td><td class="n">${l.length}</td><td class="n">${L(v)}</td><td class="n">${L(v * COMISION)}</td></tr>`; }).join("")}</table></div>
+      <div class="card"><h2 class="f-d" style="font-size:16px;margin-bottom:6px">Por forma de pago</h2><table class="t">
+        ${METODOS.map((m) => `<tr><td>${m}</td><td class="n">${L(cob.filter((c) => c.metodo === m).reduce((a, c) => a + serv(c.serv).p, 0))}</td></tr>`).join("")}
+        <tr class="tot"><td>Total</td><td class="n">${L(tot)}</td></tr></table>
+        <button class="btn p" style="margin-top:12px" onclick="SANTEC.toast('Cierre de caja enviado por WhatsApp al dueño')">Cerrar caja del día</button></div></div></main>`;
+  },
+  servicios() {
+    const roles = [...new Set(S().servicios.map((x) => x.rol))];
+    return SANTEC.hero("Servicios y precios", "Cambia un precio y se actualiza en las reservas") + `<main><div class="list cols">${roles.map((rol) => `<div class="card">
+      <h2 class="f-d" style="font-size:16px;margin-bottom:4px">${rol}</h2><div class="muted" style="margin-bottom:6px">${PROFS.filter((p) => p.rol === rol).map((p) => p.n).join(", ")}</div>
+      <table class="t">${S().servicios.filter((x) => x.rol === rol).map((x) => `<tr><td>${esc(x.n)}<div class="muted">${x.min} min</div></td>
+        <td class="n"><label>L <input class="in" style="width:92px;padding:7px 9px;text-align:right" type="number" min="0" step="10" value="${x.p}" aria-label="Precio de ${esc(x.n)}" onchange="precio('${x.id}',this.value)"></label></td></tr>`).join("")}</table></div>`).join("")}</div></main>`;
+  },
+};
+
+/* ======================= ACCIONES ======================= */
+function elegir(k, v) { const r = S().res; r[k] = v; if (k === "serv") { r.prof = 0; r.hora = null; } if (k === "prof" || k === "dia") r.hora = null; SANTEC.save(); SANTEC.render(); }
+function confirmar() {
+  const r = S().res, n = document.getElementById("r_n").value.trim(), t = document.getElementById("r_t").value.trim();
+  if (!n || !/\d{4}-?\d{4}/.test(t)) return SANTEC.toast("Escribe tu nombre y un WhatsApp de 8 dígitos");
+  const f = iso(diaN(r.dia)), h = horasLibres(r.serv, r.prof, f).find((x) => x.t === r.hora);
+  if (!h || !h.libre) { r.hora = null; SANTEC.render(); return SANTEC.toast("Esa hora ya se ocupó, elige otra"); }
+  S().citas.push({ id: Math.random().toString(36).slice(2, 9), fecha: f, prof: h.quien, serv: r.serv, cli: n, tel: t, hora: r.hora, est: 0, metodo: null });
+  SANTEC.toast(`✅ Cita confirmada con ${prof(h.quien).n}: ${etiqueta(f)} a las ${hhmm(r.hora)}`);
+  S().res = { serv: null, prof: 0, dia: 0, hora: null }; SANTEC.save(); SANTEC.render();
+}
+function detalle(id) {
+  const c = S().citas.find((x) => x.id === id), s = serv(c.serv), p = prof(c.prof);
+  const acc = {
+    0: `<button class="btn w" onclick="estado('${id}',1,'Confirmación enviada a ${esc(c.cli)} por WhatsApp')">Confirmar por WhatsApp</button><div class="btns"><button class="btn g" onclick="estado('${id}',4,'Marcada como no vino')">No vino</button><button class="btn bad" onclick="cancelar('${id}')">Cancelar cita</button></div>`,
+    1: `<button class="btn p" onclick="estado('${id}',2,'Atención iniciada')">Iniciar atención</button><div class="btns"><button class="btn w" onclick="SANTEC.toast('Recordatorio enviado a ${esc(c.cli)}')">Recordar</button><button class="btn g" onclick="estado('${id}',4,'Marcada como no vino')">No vino</button></div>`,
+    2: `<div class="muted" style="font-weight:600">Cobrar ${L(s.p)} con:</div><div class="btns" style="grid-template-columns:repeat(3,1fr)">${METODOS.map((m) => `<button class="btn g" onclick="cobrar('${id}','${m}')">${m}</button>`).join("")}</div>`,
+    3: `<div class="card" style="background:var(--ok-s);color:var(--ok);font-weight:600">Cobrado ${L(s.p)} · ${esc(c.metodo)}</div><button class="btn w" onclick="SANTEC.toast('Agradecimiento y encuesta enviados a ${esc(c.cli)}')">Enviar agradecimiento</button>`,
+    4: `<button class="btn g" onclick="estado('${id}',0,'Cita reactivada')">Reactivar cita</button>`,
+  }[c.est];
+  SANTEC.sheet(`<h3>${esc(c.cli)}</h3><div class="form">
+    <div class="card"><div class="row"><span class="muted">Servicio</span><b>${esc(s.n)}</b></div><div class="row" style="margin-top:6px"><span class="muted">Profesional</span><b>${p.n}</b></div>
+    <div class="row" style="margin-top:6px"><span class="muted">Fecha</span><b>${etiqueta(c.fecha)} · ${hhmm(c.hora)} a ${hhmm(c.hora + s.min)}</b></div>
+    <div class="row" style="margin-top:6px"><span class="muted">Precio</span><b>${L(s.p)}</b></div><div class="row" style="margin-top:6px"><span class="muted">WhatsApp</span><b>${esc(c.tel)}</b></div>
+    <div style="margin-top:10px"><span class="chip ${ESTC[c.est]}">${EST[c.est]}</span></div></div>${acc}</div>`);
+}
+function estado(id, e, msg) { S().citas.find((x) => x.id === id).est = e; SANTEC.save(); SANTEC.cerrar(); SANTEC.render(); SANTEC.toast(msg); }
+function cobrar(id, m) { const c = S().citas.find((x) => x.id === id); c.est = 3; c.metodo = m; SANTEC.save(); SANTEC.cerrar(); SANTEC.render(); SANTEC.toast(`Cobrado ${L(serv(c.serv).p)} en ${m.toLowerCase()}`); }
+function cancelar(id) { S().citas = S().citas.filter((x) => x.id !== id); SANTEC.save(); SANTEC.cerrar(); SANTEC.render(); SANTEC.toast("Cita cancelada y horario liberado"); }
+function precio(id, v) { const s = serv(id); s.p = Math.max(0, Math.round(+v || 0)); SANTEC.save(); SANTEC.toast(`${s.n}: ahora ${L(s.p)}`); }
+function pintarClientes() { const html = vistas.clientes(); const tmp = document.createElement("div"); tmp.innerHTML = html; document.getElementById("lc").innerHTML = tmp.querySelector("#lc").innerHTML; }
+function fichaCliente(tel) {
+  const l = S().citas.filter((c) => c.tel === tel).sort((a, b) => (b.fecha + String(b.hora).padStart(4, "0")).localeCompare(a.fecha + String(a.hora).padStart(4, "0")));
+  const gast = l.filter((c) => c.est === 3).reduce((a, c) => a + serv(c.serv).p, 0);
+  SANTEC.sheet(`<h3>${esc(l[0].cli)}</h3><div class="form"><div class="stats"><div class="stat"><b>${l.filter((c) => c.est === 3).length}</b><small>Visitas</small></div><div class="stat"><b>${L(gast)}</b><small>Ha gastado</small></div></div>
+    <div class="card"><table class="t">${l.map((c) => `<tr><td>${etiqueta(c.fecha)} ${hhmm(c.hora)}<div class="muted">${esc(serv(c.serv).n)} · ${prof(c.prof).n}</div></td><td class="n"><span class="chip ${ESTC[c.est]}">${EST[c.est]}</span></td></tr>`).join("")}</table></div>
+    <button class="btn w" onclick="SANTEC.toast('Promoción enviada a ${esc(l[0].cli)} por WhatsApp')">Enviar promoción por WhatsApp</button></div>`);
+}
+
+SantecApp({
+  id: "tuturno", titulo: "TuTurno — Salones, barberías y spas", nombre: "Tu<span>Turno</span>", negocio: "Salón y Barbería Estilo", pill: "Salón Estilo",
+  tabs: [["agenda", "Agenda", "agenda"], ["reservar", "Reservar", "plus"], ["clientes", "Clientes", "users"], ["caja", "Caja", "cash"], ["servicios", "Servicios", "scissors"]],
+  badges: { agenda: () => delDia(iso(diaN(0))).filter((c) => c.est === 0).length },
+  vistas, semilla,
+});
+</script>
+</body>
+</html>
