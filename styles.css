@@ -322,3 +322,54 @@ mark.todo{background:#FFF0A6;color:#111;padding:0 4px;border-radius:2px}
   .legal-layout{grid-template-columns:1fr}
   .legal-toc{position:static;padding-bottom:24px;border-bottom:1px solid #E4E4E4}
 }
+
+/* ── Asistente Santec (chat flotante) ── */
+.sc-fab{position:fixed;right:max(22px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 22px);z-index:60;
+  display:grid;place-items:center;width:62px;height:62px;border-radius:50%;background:var(--card);color:var(--white);
+  border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.45);transition:background .35s,color .35s,transform .45s var(--ease)}
+.sc-fab:hover{background:var(--white);color:var(--black);transform:translateY(-2px)}
+.sc-fab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .45s var(--ease),opacity .25s}
+.sc-fab .sc-x{position:absolute;opacity:0;transform:rotate(-90deg) scale(.6)}
+.sc-fab .sc-dot{position:absolute;top:4px;right:4px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--card);transition:opacity .25s}
+.sc-open .sc-fab .sc-ico{opacity:0;transform:rotate(90deg) scale(.6)}
+.sc-open .sc-fab .sc-x{opacity:1;transform:none}
+.sc-open .sc-fab .sc-dot{opacity:0}
+.sc-tip{position:fixed;right:calc(max(22px,env(safe-area-inset-right,0px)) + 76px);bottom:calc(env(safe-area-inset-bottom,0px) + 34px);z-index:60;
+  display:flex;align-items:center;gap:10px;padding:10px 14px 10px 16px;border-radius:999px;background:var(--card);border:1px solid var(--line);
+  color:var(--white);font-size:15px;letter-spacing:-.01em;box-shadow:0 14px 30px rgba(0,0,0,.35);
+  opacity:0;transform:translateX(10px);pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.sc-tip.show{opacity:1;transform:none;pointer-events:auto}
+.sc-tip b{font-weight:600}
+.sc-tip button{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;color:var(--gray);font-size:16px;line-height:1}
+.sc-tip button:hover{color:var(--white);background:rgba(255,255,255,.08)}
+.sc-open .sc-tip{opacity:0;pointer-events:none}
+.sc-panel{position:fixed;right:max(22px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 98px);z-index:59;
+  width:390px;height:min(640px,calc(100vh - 140px));display:flex;flex-direction:column;overflow:hidden;
+  background:var(--ink);border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 70px rgba(0,0,0,.55);
+  transform-origin:bottom right;opacity:0;transform:translateY(16px) scale(.96);visibility:hidden;
+  transition:opacity .45s var(--ease),transform .45s var(--ease),visibility 0s .45s}
+.sc-open .sc-panel{opacity:1;transform:none;visibility:visible;transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.sc-head{display:flex;align-items:center;gap:12px;padding:16px 18px;background:var(--card);border-bottom:1px solid var(--line)}
+.sc-head .sc-av{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--ink);border:1px solid var(--line);flex:none}
+.sc-head .sc-av img{width:18px;height:auto}
+.sc-head b{display:block;font-weight:600;font-size:16px;letter-spacing:-.01em}
+.sc-head small{display:flex;align-items:center;gap:6px;color:var(--gray);font-size:13px}
+.sc-head small::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.sc-head .sc-close{margin-left:auto;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;color:var(--gray);transition:background .25s,color .25s}
+.sc-head .sc-close:hover{background:rgba(255,255,255,.08);color:var(--white)}
+.sc-head .sc-close svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.sc-body{position:relative;flex:1;min-height:0}
+.sc-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--ink)}
+.sc-wait{position:absolute;inset:0;display:grid;place-content:center;gap:14px;justify-items:center;color:var(--gray);font-size:14px;text-align:center;padding:0 30px}
+.sc-wait i{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:sc-spin .9s linear infinite}
+@keyframes sc-spin{to{transform:rotate(360deg)}}
+.sc-fab:focus-visible,.sc-panel button:focus-visible,.sc-tip button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (max-width:600px){
+  .sc-panel{inset:0;width:auto;height:auto;border-radius:0;border:0;padding-top:env(safe-area-inset-top,0px)}
+  .sc-open .sc-fab{opacity:0;pointer-events:none}
+  .sc-tip{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .sc-fab,.sc-fab svg,.sc-panel,.sc-tip{transition:none}
+  .sc-wait i{animation-duration:2.5s}
+}
