@@ -482,3 +482,20 @@ dialog[open]::backdrop{animation:fadein .45s var(--ease-out)}
   .card{top:96px;height:clamp(420px,calc(100vh - 136px),520px)}
   .apps{padding-bottom:calc(clamp(90px,11vw,140px) + 80px)}
 }
+
+/* Tarjetas de apps (escritorio): en reposo dejan ~120 px de fondo blanco abajo,
+   para que la burbuja del chat no tape "Probar demo" ni "La quiero" */
+@media (min-width:992px){
+  .card{top:88px;height:clamp(400px,calc(100vh - 212px),520px)}
+}
+/* Pantallas bajas (laptops): textos un poco más compactos para que todo quepa */
+@media (min-width:992px) and (max-height:820px){
+  .card-body{padding:28px 34px}
+  .card h3{font-size:clamp(30px,3vw,38px);margin-top:10px}
+  .card p{margin-top:10px;font-size:15px}
+  .card ul{margin-top:12px;gap:5px;font-size:14px}
+  .card-actions{gap:10px 22px}
+  .card-actions .btn-circle{font-size:16px}
+  .card-actions .btn-circle .circle{width:40px;height:40px}
+  .card-shot img{top:36px}
+}
