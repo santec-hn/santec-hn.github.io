@@ -499,3 +499,9 @@ dialog[open]::backdrop{animation:fadein .45s var(--ease-out)}
   .card-actions .btn-circle .circle{width:40px;height:40px}
   .card-shot img{top:36px}
 }
+
+/* Tarjetas de apps: el espacio blanco de abajo mide solo lo que ocupa la burbuja del chat
+   (22 px de margen + 62 px de burbuja + 14 px de aire = 98 px), pegada a la tarjeta */
+@media (min-width:992px){
+  .card{height:clamp(400px,calc(100vh - 186px),520px)}
+}
