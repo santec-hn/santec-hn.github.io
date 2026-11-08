@@ -474,3 +474,11 @@ dialog[open]::backdrop{animation:fadein .45s var(--ease-out)}
 .new-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--accent);color:var(--black);font-style:normal;font-size:11px;letter-spacing:.06em;vertical-align:1px}
 .card-actions .btn-circle.demo .circle{background:var(--accent);color:var(--black)}
 .card-actions .btn-circle.demo:hover .circle{background:var(--white)}
+
+/* Tarjetas de apps (escritorio): todas se pegan a la misma altura, caben completas en pantalla
+   y cada una se queda quieta un tramo antes de que llegue la siguiente encima */
+@media (min-width:992px){
+  .cards{gap:34vh}
+  .card{top:96px;height:clamp(420px,calc(100vh - 136px),520px)}
+  .apps{padding-bottom:calc(clamp(90px,11vw,140px) + 80px)}
+}
