@@ -72,6 +72,8 @@
   raiz.querySelector(".sc-tip-x").addEventListener("click", ocultarTip);
   tip.addEventListener("click", (e) => { if (!e.target.closest("button")) abrir(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && html.classList.contains("sc-open")) cerrar(); });
+  // Cualquier botón de la página con data-chat abre el asistente
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-chat]")) { e.preventDefault(); abrir(); } });
 
   // Invitación discreta a los 6 segundos, una vez por visita
   let visto = false;

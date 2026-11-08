@@ -32,7 +32,7 @@ cards.innerHTML = APPS.map((a, i) => `
         <a class="text-link" href="${WA}?text=${encodeURIComponent(`Hola Santec, me interesa la app ${a.name}`)}" target="_blank" rel="noopener">La quiero <svg><use href="#i-arrow-up"/></svg></a>
       </div>
     </div>
-    <div class="card-shot"><img src="assets/img/${a.shot}.png" alt="Pantalla de ${a.name}" loading="lazy"></div>
+    <div class="card-shot"><img src="assets/img/${a.shot}.webp" alt="Pantalla de ${a.name}" loading="lazy"></div>
     <span class="card-icon" aria-hidden="true"><svg><use href="#${a.icon}"/></svg></span>
   </article>`).join("");
 
@@ -48,7 +48,7 @@ cards.innerHTML = APPS.map((a, i) => `
     <li><button class="reel-item" data-i="${i}">
       <span class="n">0${i + 1}</span>
       <span class="t">${a.name}<small>${a.tag}</small></span>
-      <span class="thumb"><img src="assets/img/${a.shot}.png" alt="" loading="lazy"></span>
+      <span class="thumb"><img src="assets/img/${a.shot}.webp" alt="" loading="lazy"></span>
       <span class="bar"></span>
     </button></li>`).join("");
   const items = [...list.querySelectorAll(".reel-item")];
@@ -57,7 +57,7 @@ cards.innerHTML = APPS.map((a, i) => `
   const load = (i) => {
     cur = i;
     items.forEach((b, k) => { b.classList.toggle("on", k === i); b.querySelector(".bar").style.transform = "scaleX(0)"; });
-    vid.poster = `assets/img/${APPS[i].shot}.png`;
+    vid.poster = `assets/img/${APPS[i].shot}.webp`;
     vid.src = `assets/video/${APPS[i].id}.mp4`;
     vid.load();
     play();
@@ -108,7 +108,42 @@ document.querySelectorAll(".split").forEach((el) => {
 const io = new IntersectionObserver((entries) => {
   entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
 }, { threshold: 0.2, rootMargin: "0px 0px -8% 0px" });
-document.querySelectorAll(".split:not(.hero .split), .fade:not(.hero .fade)").forEach((el) => io.observe(el));
+document.querySelectorAll(".split:not(.hero .split), .fade:not(.hero .fade), .facts").forEach((el) => io.observe(el));
+
+const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Portada: las pantallas siguen al cursor (solo con mouse) ---------- */
+if (!quieto && matchMedia("(pointer: fine)").matches) {
+  const hero = document.querySelector(".hero");
+  const screens = document.querySelector(".screens");
+  hero.addEventListener("pointermove", (e) => {
+    const r = hero.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+    screens.style.setProperty("--px", `${(-x * 28).toFixed(1)}px`);
+    screens.style.setProperty("--py", `${(-y * 20).toFixed(1)}px`);
+  });
+  hero.addEventListener("pointerleave", () => { screens.style.setProperty("--px", "0px"); screens.style.setProperty("--py", "0px"); });
+}
+
+/* ---------- Apps: al apilarse, cada tarjeta se aleja un poco detrás de la siguiente ---------- */
+if (!quieto) {
+  const pila = [...document.querySelectorAll(".card")];
+  const escritorio = matchMedia("(min-width: 992px)");
+  let pendiente = false;
+  const profundidad = () => {
+    pendiente = false;
+    pila.forEach((c, i) => {
+      const sig = pila[i + 1];
+      if (!escritorio.matches || !sig) { c.style.transform = ""; c.style.filter = ""; return; }
+      const a = c.getBoundingClientRect(), b = sig.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (a.bottom - b.top) / a.height));
+      c.style.transform = p ? `scale(${(1 - p * 0.05).toFixed(4)})` : "";
+      c.style.filter = p ? `brightness(${(1 - p * 0.35).toFixed(3)})` : "";
+    });
+  };
+  addEventListener("scroll", () => { if (!pendiente) { pendiente = true; requestAnimationFrame(profundidad); } }, { passive: true });
+  escritorio.addEventListener("change", profundidad);
+}
 
 // Entrada del hero
 requestAnimationFrame(() => {

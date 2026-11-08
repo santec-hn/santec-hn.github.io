@@ -7,13 +7,32 @@
 <title>Santec — Innovación conectada</title>
 <meta name="description" content="Santec desarrolla apps para negocios hondureños: talleres, clínicas, tiendas, equipos de emergencia y atención por WhatsApp con IA.">
 <meta name="theme-color" content="#000000">
-<link rel="icon" href="assets/brand/santec-mark.png">
+<link rel="canonical" href="https://santec-hn.github.io/">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/brand/icon-512.png">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<!-- Vista previa al compartir en WhatsApp, Facebook y otras redes -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Santec">
+<meta property="og:locale" content="es_HN">
+<meta property="og:url" content="https://santec-hn.github.io/">
+<meta property="og:title" content="Santec — Software que ordena tu negocio">
+<meta property="og:description" content="Apps hechas en Honduras para talleres, clínicas, tiendas y equipos de emergencia. Simples, a precio justo y desde el celular.">
+<meta property="og:image" content="https://santec-hn.github.io/assets/brand/og-santec.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Santec: apps para negocios hondureños">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Santec","legalName":"Inversiones Santec Sociedad de Responsabilidad Limitada","taxID":"08019026323820","url":"https://santec-hn.github.io/","logo":"https://santec-hn.github.io/assets/brand/icon-512.png","email":"allxfllrs@gmail.com","telephone":"+504 9745-8718","address":{"@type":"PostalAddress","streetAddress":"Col. Simón Bolívar, calle principal, casa #9814","addressLocality":"Tegucigalpa","addressRegion":"Francisco Morazán","postalCode":"11101","addressCountry":"HN"}}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
 
 <!-- Iconos: trazo de un solo tono (currentColor).
      Algunos trazos están basados en Lucide (https://lucide.dev), licencia ISC:
@@ -54,7 +73,7 @@
     <a href="#apps">Apps</a>
     <a href="#contacto">Contacto</a>
   </nav>
-  <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
 </header>
 
 <main id="top">
@@ -62,22 +81,27 @@
   <section class="hero">
     <div class="hero-media" aria-hidden="true">
       <div class="screens">
-        <img src="assets/img/mw-inicio.png" alt="">
-        <img src="assets/img/st-chat.png" alt="">
-        <img src="assets/img/mc-agenda.png" alt="">
-        <img src="assets/img/cf-vender.png" alt="">
-        <img src="assets/img/r3-inicio.png" alt="">
-        <img src="assets/img/mw-ordenes.png" alt="">
-        <img src="assets/img/st-pedidos.png" alt="">
-        <img src="assets/img/mc-reservar.png" alt="">
-        <img src="assets/img/cf-reportes.png" alt="">
-        <img src="assets/img/r3-unidades.png" alt="">
+        <img src="assets/img/mw-inicio.webp" alt="" decoding="async">
+        <img src="assets/img/st-chat.webp" alt="" decoding="async">
+        <img src="assets/img/mc-agenda.webp" alt="" decoding="async">
+        <img src="assets/img/cf-vender.webp" alt="" decoding="async">
+        <img src="assets/img/r3-inicio.webp" alt="" decoding="async">
+        <img src="assets/img/mw-ordenes.webp" alt="" decoding="async">
+        <img src="assets/img/st-pedidos.webp" alt="" decoding="async">
+        <img src="assets/img/mc-reservar.webp" alt="" decoding="async">
+        <img src="assets/img/cf-reportes.webp" alt="" decoding="async">
+        <img src="assets/img/r3-unidades.webp" alt="" decoding="async">
       </div>
     </div>
-    <div class="hero-copy">
+    <div class="hero-copy" id="contenido">
       <h1 class="split">Software que ordena tu negocio.</h1>
       <p class="hero-lead fade">Apps hechas en Honduras para talleres, clínicas, tiendas y equipos de emergencia. Simples, a precio justo y desde el celular.</p>
+      <div class="hero-cta fade">
+        <a class="btn-pill" href="https://wa.me/50497458718?text=Hola%20Santec%2C%20quiero%20una%20demostraci%C3%B3n%20gratis" target="_blank" rel="noopener">Pide una demo gratis<svg><use href="#i-arrow"/></svg></a>
+        <a class="btn-ghost" href="#apps">Ver las apps</a>
+      </div>
     </div>
+    <a class="scroll-cue" href="#nosotros" aria-label="Bajar a la siguiente sección"><span></span></a>
   </section>
 
   <!-- DECLARACIÓN -->
@@ -87,7 +111,7 @@
       <div class="statement-grid">
         <div class="reel fade" id="reel">
           <div class="reel-player">
-            <video id="reelVideo" muted playsinline preload="none" poster="assets/img/mw-inicio.png"></video>
+            <video id="reelVideo" muted playsinline preload="none" poster="assets/img/mw-inicio.webp"></video>
             <button class="reel-sound" id="reelSound" aria-label="Activar sonido">
               <svg class="ic-off"><use href="#i-mute"/></svg><svg class="ic-on"><use href="#i-volume"/></svg>
             </button>
@@ -148,22 +172,22 @@
 
       <div class="steps">
         <article class="step" data-step="0">
-          <figure class="step-media"><img src="assets/brand/santec-sello.jpg" alt="Sello con el logo de Santec sobre papel" loading="lazy"></figure>
+          <figure class="step-media"><img src="assets/brand/santec-sello.webp" alt="Sello con el logo de Santec sobre papel" loading="lazy"></figure>
           <p class="step-kicker">01 — Escuchar</p>
           <h2 class="h2">Entendemos tu negocio</h2>
           <p class="step-text">Antes de hablar de tecnología, hablamos de ti: cómo vendes, cómo atiendes y qué te quita tiempo. De ahí sale lo que tu app necesita, y nada más.</p>
         </article>
         <article class="step" data-step="1">
-          <figure class="step-media"><img src="assets/brand/santec-plano.jpg" alt="Logo de Santec en estilo plano técnico" loading="lazy"></figure>
+          <figure class="step-media"><img src="assets/brand/santec-plano.webp" alt="Logo de Santec en estilo plano técnico" loading="lazy"></figure>
           <p class="step-kicker">02 — Diseñar</p>
           <h2 class="h2">La adaptamos a tu medida</h2>
           <p class="step-text">Cargamos tus productos, servicios, precios y horarios. Tu app llega lista para usarse, con tu nombre y tu forma de trabajar.</p>
         </article>
         <article class="step" data-step="2">
           <figure class="step-media step-phones">
-            <img src="assets/img/mw-nueva.png" alt="" loading="lazy">
-            <img src="assets/img/mc-reservar.png" alt="" loading="lazy">
-            <img src="assets/img/cf-cobrar.png" alt="" loading="lazy">
+            <img src="assets/img/mw-nueva.webp" alt="" loading="lazy">
+            <img src="assets/img/mc-reservar.webp" alt="" loading="lazy">
+            <img src="assets/img/cf-cobrar.webp" alt="" loading="lazy">
           </figure>
           <p class="step-kicker">03 — Lanzar</p>
           <h2 class="h2">Empiezas a usarla</h2>
@@ -171,9 +195,9 @@
         </article>
         <article class="step" data-step="3">
           <figure class="step-media step-phones">
-            <img src="assets/img/st-panel.png" alt="" loading="lazy">
-            <img src="assets/img/cf-reportes.png" alt="" loading="lazy">
-            <img src="assets/img/r3-estadisticas.png" alt="" loading="lazy">
+            <img src="assets/img/st-panel.webp" alt="" loading="lazy">
+            <img src="assets/img/cf-reportes.webp" alt="" loading="lazy">
+            <img src="assets/img/r3-estadisticas.webp" alt="" loading="lazy">
           </figure>
           <p class="step-kicker">04 — Acompañar</p>
           <h2 class="h2">Seguimos contigo</h2>
@@ -201,7 +225,7 @@
   <!-- VALORES -->
   <section class="values">
     <div class="values-media">
-      <img src="assets/brand/santec-neon.jpg" alt="" loading="lazy">
+      <img src="assets/brand/santec-neon.webp" alt="" loading="lazy">
     </div>
     <div class="values-copy">
       <h2 class="h2 split">Cercanía. Rapidez. Precio justo. Soporte local.</h2>
@@ -217,7 +241,7 @@
         <h2 class="h2">Pide una demostración gratis.</h2>
         <span class="btn-circle as-span"><span class="circle"><svg><use href="#i-arrow"/></svg></span>Agendar por WhatsApp</span>
       </div>
-      <div class="feature-media"><img src="assets/brand/santec-azul.jpg" alt="Logo de Santec en azul" loading="lazy"></div>
+      <div class="feature-media"><img src="assets/brand/santec-azul.webp" alt="Logo de Santec en azul" loading="lazy"></div>
     </a>
   </section>
 
@@ -227,12 +251,14 @@
       <h2 class="display split">¿Tienes un negocio en mente?</h2>
       <div class="contact-side fade">
         <h3>Información de contacto</h3>
-        <p><span>WhatsApp:</span> +504 9745-8718</p>
+        <p><span>WhatsApp:</span> <a href="https://wa.me/50497458718" target="_blank" rel="noopener">+504 9745-8718</a></p>
+        <p><span>Correo:</span> <a href="mailto:allxfllrs@gmail.com">allxfllrs@gmail.com</a></p>
         <p><span>Ubicación:</span> Col. Simón Bolívar, calle principal, casa #9814, Tegucigalpa, Francisco Morazán 11101, Honduras</p>
         <a class="cta-box" href="https://wa.me/50497458718?text=Hola%20Santec%2C%20tengo%20un%20proyecto" target="_blank" rel="noopener">
           <svg class="cta-arrow"><use href="#i-arrow-up"/></svg>
-          <span>¡Hagámoslo!</span>
+          <span>¡Hagámoslo!<small>Escríbenos por WhatsApp</small></span>
         </a>
+        <button class="chat-link" type="button" data-chat>¿Prefieres escribir aquí? Habla con el asistente <svg><use href="#i-chat"/></svg></button>
         <p class="privacy-hint">Al escribirnos por WhatsApp solo recibimos tu número, el nombre de tu perfil y lo que decidas contarnos. Lo usamos únicamente para responderte. Lee nuestra <a href="privacidad.html">Política de privacidad</a>.</p>
       </div>
     </div>
@@ -253,14 +279,15 @@
     <a href="terminos.html">Términos y condiciones</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a><a href="reembolsos.html">Reembolsos</a>
   </nav>
   <p class="copy">© <span id="year"></span> Santec · Innovación conectada · Hecho en Honduras</p>
+  <p class="copy legal-id">Inversiones Santec Sociedad de Responsabilidad Limitada · RTN 08019026323820</p>
 </footer>
 
-<dialog id="videoModal">
+<dialog id="videoModal" aria-label="Video de la app">
   <button class="modal-close" aria-label="Cerrar"><svg><use href="#i-close"/></svg></button>
   <video controls playsinline></video>
 </dialog>
 
-<script src="script.js?v=4"></script>
-<script src="chat.js?v=1" defer></script>
+<script src="script.js?v=5"></script>
+<script src="chat.js?v=2" defer></script>
 </body>
 </html>
