@@ -70,14 +70,14 @@ const seed={inc:[
 {id:312,tipo:"Accidente vial",lugar:"Bulevar Morazán, frente a gasolinera",hora:"10:55",estado:1,unidad:"A-03",x:66,y:58,log:[["10:55","Reporte recibido por llamada"],["10:56","Ambulancia A-03 asignada"]]},
 {id:313,tipo:"Emergencia médica",lugar:"Mercado Zonal Belén",hora:"11:02",estado:0,unidad:null,x:52,y:24,log:[["11:02","Reporte desde la app ciudadana"]]}],
 uni:[["M-12","Motobomba","Estación Central","busy"],["A-03","Ambulancia","Estación Central","busy"],["M-07","Motobomba","Estación Norte","ok"],["R-02","Unidad de rescate","Estación Sur","ok"],["A-05","Ambulancia","Estación Norte","ok"],["M-15","Cisterna","Estación Sur","off"]],next:314,tipo:"Incendio"};
-let S;try{S=JSON.parse(localStorage.getItem("r360"))}catch(e){}if(!S)S=seed;
-const save=()=>{try{localStorage.setItem("r360",JSON.stringify(S))}catch(e){}};
+let S;try{S=JSON.parse(localStorage.getItem("r3602"))}catch(e){}if(!S)S=JSON.parse(JSON.stringify(seed));
+const save=()=>{try{localStorage.setItem("r3602",JSON.stringify(S))}catch(e){}};
 const $=id=>document.getElementById(id);const go=h=>location.hash=h;
 function toast(t){$("toast").textContent=t;$("toast").classList.add("on");setTimeout(()=>$("toast").classList.remove("on"),2400)}
 function head(t,s,back){return `<header><div class="top">${back?`<button class="back" onclick="history.back()">← Atrás</button>`:`<div class="logo">Rescate <span>360</span></div>`}<span class="live">En vivo</span></div><h1>${t}</h1>${s?`<p>${s}</p>`:""}</header>`}
 function map(){return `<div class="map"><svg viewBox="0 0 400 230" preserveAspectRatio="none"><rect width="400" height="230" fill="#E6ECE3"/><path d="M0 70 L400 90 M0 160 L400 140 M90 0 L120 230 M260 0 L240 230 M330 0 L380 230" stroke="#fff" stroke-width="12"/><path d="M0 115 Q200 60 400 120" stroke="#FCD34D" stroke-width="8" fill="none"/><rect x="150" y="170" width="60" height="40" rx="6" fill="#CFE3C7"/><rect x="20" y="10" width="50" height="40" rx="6" fill="#CFE3C7"/></svg>
 ${S.inc.filter(i=>i.estado<4).map(i=>`<div class="pin" style="left:${i.x}%;top:${i.y}%;background:${i.estado==0?"#B91C1C":i.estado<3?"#B45309":"#4338CA"}" onclick="go('#incidente/${i.id}')">${TIPOS[i.tipo][0]} #${i.id}</div>`).join("")}
-<div class="pin u" style="left:20%;top:72%">🚒 M-07</div><div class="pin u" style="left:84%;top:30%">🚑 A-05</div></div>`}
+${S.uni.filter(u=>u[3]=="ok").map((u,k)=>{const p=POS[u[2]];return `<div class="pin u" style="left:${p[0]+k*4}%;top:${p[1]+k*6}%">${ICONO(u[1])} ${u[0]}</div>`}).join("")}</div>`}
 function inc(i){return `<div class="card" onclick="go('#incidente/${i.id}')"><div class="row"><div class="type"><div class="ic" style="background:${TIPOS[i.tipo][1]}">${TIPOS[i.tipo][0]}</div><div><b>${i.tipo}</b><div class="muted">${i.lugar} · ${i.hora}</div></div></div><span class="chip c${i.estado}">${EST[i.estado]}</span></div></div>`}
 const V={
 inicio(){const a=S.inc.filter(i=>i.estado<4);return head("Centro de mando","Cuerpo de Bomberos · Distrito Central")+`<main><div class="grid">
@@ -88,23 +88,29 @@ reportar(){return head("Reportar emergencia","Para ciudadanos · ayuda en un toq
 <button class="sos" onclick="reportar()">SOS<small>Toca para pedir ayuda</small></button>
 <div class="types">${Object.keys(TIPOS).map(t=>`<button class="${S.tipo==t?"sel":""}" onclick="S.tipo='${t}';render()">${TIPOS[t][0]} ${t}</button>`).join("")}</div>
 <div class="loc">📍 <div style="text-align:left"><b>Ubicación detectada</b><div class="muted" style="margin:0">Col. Palmira, Tegucigalpa · precisión 8 m</div></div></div>
-<button class="btn g">📷 Adjuntar foto o video</button></main>`},
+<button class="btn g" onclick="S.foto=true;toast('Foto adjuntada. Se enviará con tu reporte')">📷 Adjuntar foto o video</button></main>`},
 incidente(id){const i=S.inc.find(x=>x.id==id);if(!i)return V.inicio();return head(TIPOS[i.tipo][0]+" "+i.tipo,"Incidente #"+i.id+" · "+i.lugar,true)+`<main>
 <div class="steps">${EST.map((e,k)=>`<div class="${k<=i.estado?"on":""}"><i></i>${e}</div>`).join("")}</div>
 <div class="card"><div class="row"><div><div class="muted" style="margin:0">Unidad asignada</div><b>${i.unidad||"Sin asignar"}</b></div><div style="text-align:right"><div class="muted" style="margin:0">Reportado</div><b>${i.hora}</b></div></div></div>
-${!i.unidad?`<h2>Unidades disponibles</h2>${S.uni.filter(u=>u[3]=="ok").map(u=>`<div class="card" onclick="asignar(${i.id},'${u[0]}')"><div class="row"><div><b>🚒 ${u[0]} · ${u[1]}</b><div class="muted">${u[2]} · a ${3+u[0].length} min</div></div><span class="chip c2">Asignar</span></div></div>`).join("")}`:
+${!i.unidad?`<h2>Unidades disponibles</h2>${libres(i.tipo).map(u=>`<div class="card" onclick="asignar(${i.id},'${u[0]}')"><div class="row"><div><b>${ICONO(u[1])} ${u[0]} · ${u[1]}</b><div class="muted">${u[2]} · llega en ~${ETA[u[2]]} min${RECO[i.tipo].includes(u[1])?" · <b style=\"color:#15803d\">Recomendada</b>":""}</div></div><span class="chip c2">Asignar</span></div></div>`).join("")||`<div class="muted">No hay unidades libres en este momento.</div>`}`:
 i.estado<4?`<button class="btn r" onclick="avanzar(${i.id})">Marcar: ${EST[i.estado+1]}</button>`:""}
 <h2>Bitácora</h2><div class="card"><div class="log">${i.log.map(l=>`<p><b>${l[0]}</b>${l[1]}</p>`).join("")}</div></div>
 <button class="btn d" onclick="toast('Reporte PDF generado para el expediente')">Generar informe del incidente</button></main>`},
-unidades(){return head("Unidades","Estado de la flota en tiempo real")+`<main>${S.uni.map(u=>`<div class="card"><div class="row"><div><b>${u[1]=="Ambulancia"?"🚑":"🚒"} ${u[0]} · ${u[1]}</b><div class="muted">${u[2]}</div></div><span class="chip ${u[3]}">${{ok:"Disponible",busy:"En servicio",off:"Mantenimiento"}[u[3]]}</span></div></div>`).join("")}</main>`},
+unidades(){return head("Unidades","Estado de la flota en tiempo real")+`<main>${S.uni.map(u=>`<div class="card"><div class="row"><div><b>${ICONO(u[1])} ${u[0]} · ${u[1]}</b><div class="muted">${u[2]}</div></div><span class="chip ${u[3]}">${{ok:"Disponible",busy:"En servicio",off:"Mantenimiento"}[u[3]]}</span></div></div>`).join("")}</main>`},
 estadisticas(){const d=[["Incendios",38],["Accidentes",64],["Médicas",82],["Rescates",21]];return head("Estadísticas","Octubre 2026")+`<main><div class="grid">
 <div class="stat red"><b>205</b><small>Emergencias atendidas</small></div><div class="stat"><b>7 min</b><small>Tiempo de respuesta</small></div><div class="stat"><b>98%</b><small>Con informe completo</small></div></div>
 <h2>Por tipo de emergencia</h2><div class="card">${d.map(x=>`<div class="barrow"><span>${x[0]}</span><div><i style="width:${x[1]}%"></i></div><b>${x[1]}</b></div>`).join("")}</div>
 <h2>Zonas con más reportes</h2><div class="card"><div class="barrow"><span>Col. Kennedy</span><div><i style="width:70%"></i></div></div><div class="barrow"><span>Centro</span><div><i style="width:55%"></i></div></div><div class="barrow"><span>Col. Palmira</span><div><i style="width:30%"></i></div></div></div></main>`}};
 function now(){const d=new Date();return d.getHours()+":"+String(d.getMinutes()).padStart(2,"0")}
-function reportar(){const i={id:S.next++,tipo:S.tipo,lugar:"Col. Palmira, Tegucigalpa",hora:now(),estado:0,unidad:null,x:44,y:62,log:[[now(),"Reporte desde la app ciudadana con ubicación GPS"]]};S.inc.unshift(i);save();toast("¡Ayuda en camino! Tu reporte llegó al centro de mando");go("#incidente/"+i.id)}
+function reportar(){const i={id:S.next++,tipo:S.tipo,lugar:"Col. Palmira, Tegucigalpa",hora:now(),estado:0,unidad:null,x:30+Math.round(Math.random()*45),y:30+Math.round(Math.random()*40),log:[[now(),"Reporte desde la app ciudadana con ubicación GPS"+(S.foto?" y foto":"")]]};S.foto=false;S.inc.unshift(i);save();toast("¡Ayuda en camino! Tu reporte llegó al centro de mando");go("#incidente/"+i.id)}
 function asignar(id,u){const i=S.inc.find(x=>x.id==id);i.unidad=u;i.estado=1;i.log.push([now(),"Unidad "+u+" asignada por despacho"]);S.uni.find(x=>x[0]==u)[3]="busy";save();toast("Unidad "+u+" notificada");render()}
-function avanzar(id){const i=S.inc.find(x=>x.id==id);i.estado++;i.log.push([now(),EST[i.estado]]);if(i.estado==4){const u=S.uni.find(x=>x[0]==i.unidad);if(u)u[3]="ok"}save();render()}
+const POS={"Estación Central":[48,46],"Estación Norte":[70,18],"Estación Sur":[18,70]};
+const ETA={"Estación Central":5,"Estación Norte":8,"Estación Sur":11};
+const RECO={Incendio:["Motobomba","Cisterna"],"Accidente vial":["Ambulancia","Unidad de rescate"],"Emergencia médica":["Ambulancia"],Rescate:["Unidad de rescate"]};
+const ICONO=t=>t=="Ambulancia"?"🚑":t=="Unidad de rescate"?"🛟":"🚒";
+const libres=tipo=>S.uni.filter(u=>u[3]=="ok").sort((a,b)=>RECO[tipo].includes(b[1])-RECO[tipo].includes(a[1])||ETA[a[2]]-ETA[b[2]]);
+const PASO=["","asignada","en camino","llegó a la escena","Incidente cerrado · unidad disponible"];
+function avanzar(id){const i=S.inc.find(x=>x.id==id);i.estado++;i.log.push([now(),i.estado==4?PASO[4].replace("unidad",i.unidad):i.unidad+" "+PASO[i.estado]]);if(i.estado==4){const u=S.uni.find(x=>x[0]==i.unidad);if(u)u[3]="ok"}save();render()}
 function render(){const [r,a]=(location.hash.slice(1)||"inicio").split("/");$("view").innerHTML=(V[r]||V.inicio)(a);scrollTo(0,0);
 const t=[["inicio","Mando","home"],["incidentes","Emergencias","list"],["reportar","SOS",""],["unidades","Unidades","truck"],["estadisticas","Datos","chart"]];
 $("nav").innerHTML=t.map(x=>`<button class="${x[0]==r?"on":""} ${x[0]=="reportar"?"fab":""}" onclick="go('#${x[0]}')">${x[2]?ICON[x[2]]+x[1]:x[1]}</button>`).join("")}

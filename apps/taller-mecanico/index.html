@@ -57,6 +57,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:9px 2px;bord
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;width:max-content;max-width:90%}
 .toast.on{opacity:1}
 .shot .app,.shot nav{max-width:none}
+.addq{display:flex;gap:8px;margin-top:12px}.addq input{flex:1;min-width:0;margin:0}.addq input[type=number]{flex:0 0 90px}.addq .btn{width:auto;margin:0;padding:0 14px}
 </style>
 </head>
 <body>
@@ -80,9 +81,9 @@ const seed=[
 {id:1043,placa:"HBT 9034",auto:"Nissan Frontier 2020",cliente:"Transportes López",tel:"3312-7788",km:"61,005",falla:"Luz de motor encendida",estado:1,items:[["Escaneo computarizado",500]]},
 {id:1044,placa:"PDA 5520",auto:"Kia Sportage 2017",cliente:"María Fernández",tel:"8890-4411",km:"112,770",falla:"Aire acondicionado no enfría",estado:0,items:[]}];
 const hist={"HAB 4521":[["12 ago 2026","Cambio de aceite y filtros","142,100 km"],["03 mar 2026","Alineado y balanceo","135,900 km"],["18 oct 2025","Frenos traseros","128,400 km"]]};
-let S;try{S=JSON.parse(localStorage.getItem("mw"))}catch(e){}
-if(!S)S={ordenes:seed,next:1045};
-const save=()=>{try{localStorage.setItem("mw",JSON.stringify(S))}catch(e){}};
+let S;try{S=JSON.parse(localStorage.getItem("mw2"))}catch(e){}
+if(!S)S={ordenes:JSON.parse(JSON.stringify(seed)),next:1045};
+const save=()=>{try{localStorage.setItem("mw2",JSON.stringify(S))}catch(e){}};
 const L=n=>"L "+n.toLocaleString("es-HN");
 const total=o=>o.items.reduce((a,b)=>a+b[1],0);
 const $=id=>document.getElementById(id);
@@ -91,13 +92,13 @@ function go(h){location.hash=h}
 function head(t,sub,back){return `<header><div class="top">${back?`<button class="back" onclick="history.back()">← Atrás</button>`:`<div class="logo">Taller <span>Mecánico</span></div>`}<div class="avatar">TM</div></div><h1>${t}</h1>${sub?`<p>${sub}</p>`:""}</header>`}
 function card(o){const p=[15,35,65,100,100][o.estado];return `<div class="card" onclick="go('#orden/${o.id}')"><div class="row"><span class="plate">${o.placa}</span><span class="chip s${o.estado}">${ESTADOS[o.estado]}</span></div><div style="margin-top:10px;font-weight:600">${o.auto}</div><div class="muted">${o.cliente} · ${o.falla}</div><div class="bar"><i style="width:${p}%"></i></div></div>`}
 const V={
-inicio(){const a=S.ordenes.filter(o=>o.estado<4);return head("Buenos días, Taller Mejía","Jueves 5 de noviembre")+`<main><div class="grid">
+inicio(){const a=S.ordenes.filter(o=>o.estado<4);return head(saludo()+", Taller Mejía","Jueves 5 de noviembre")+`<main><div class="grid">
 <div class="stat accent"><b>${a.length}</b><small>Vehículos en taller</small></div>
 <div class="stat"><b>${S.ordenes.filter(o=>o.estado==3).length}</b><small>Listos para entregar</small></div>
 <div class="stat"><b>${S.ordenes.filter(o=>o.estado==1).length}</b><small>En diagnóstico</small></div>
-<div class="stat"><b>${L(S.ordenes.filter(o=>o.estado>=3).reduce((s,o)=>s+total(o),0))}</b><small>Por cobrar hoy</small></div></div>
+<div class="stat"><b>${L(S.ordenes.filter(o=>o.estado==3).reduce((s,o)=>s+total(o),0))}</b><small>Por cobrar al entregar</small></div></div>
 <h2>En el taller ahora <a onclick="go('#ordenes')">Ver todo</a></h2>${a.slice(0,3).map(card).join("")}</main>`},
-ordenes(){return head("Órdenes de trabajo",S.ordenes.length+" órdenes registradas")+`<main>${ESTADOS.slice(0,4).map((e,i)=>{const l=S.ordenes.filter(o=>o.estado==i);return l.length?`<h2>${e} <span class="chip s${i}">${l.length}</span></h2>`+l.map(card).join(""):""}).join("")}</main>`},
+ordenes(){return head("Órdenes de trabajo",S.ordenes.length+" órdenes registradas")+`<main>${ESTADOS.map((e,i)=>{const l=S.ordenes.filter(o=>o.estado==i);return l.length?`<h2>${e} <span class="chip s${i}">${l.length}</span></h2>`+l.map(card).join(""):""}).join("")}</main>`},
 nueva(){return head("Recibir vehículo","Orden #"+S.next)+`<main>
 <label>Placa</label><input id="f_placa" placeholder="Ej. HAB 1234">
 <label>Vehículo</label><input id="f_auto" placeholder="Marca, modelo y año">
@@ -115,21 +116,26 @@ orden(id){const o=S.ordenes.find(x=>x.id==id);if(!o)return V.inicio();return hea
 <div class="card"><div class="muted" style="margin:0">Cliente</div><div style="font-weight:600;margin-top:2px">${o.cliente} · ${o.tel}</div>
 <div class="muted">Kilometraje</div><div style="font-weight:600;margin-top:2px">${o.km} km</div>
 <div class="muted">Falla reportada</div><div style="font-weight:600;margin-top:2px">${o.falla}</div></div>
-<h2>Cotización</h2><div class="card">${o.items.length?`<table>${o.items.map(i=>`<tr><td>${i[0]}</td><td>${L(i[1])}</td></tr>`).join("")}<tr class="total"><td>Total</td><td>${L(total(o))}</td></tr></table>`:`<div class="muted" style="margin:0">Aún sin cotización. Agrega repuestos y mano de obra.</div>`}</div>
+<h2>Cotización</h2><div class="card">${o.items.length?`<table>${o.items.map(i=>`<tr><td>${i[0]}</td><td>${L(i[1])}</td></tr>`).join("")}<tr class="total"><td>Total</td><td>${L(total(o))}</td></tr></table>`:`<div class="muted" style="margin:0">Aún sin cotización. Agrega repuestos y mano de obra.</div>`}
+${o.estado<3?`<div class="addq"><input id="q_txt" placeholder="Repuesto o servicio"><input id="q_val" type="number" min="0" placeholder="L"><button class="btn p" onclick="agregar(${o.id})">Agregar</button></div>`:""}</div>
 ${o.estado<4?`<button class="btn p" onclick="avanzar(${o.id})">Pasar a: ${ESTADOS[o.estado+1]}</button>`:""}
-<button class="btn w" onclick="toast('Mensaje enviado a ${o.cliente} por WhatsApp')">Avisar al cliente por WhatsApp</button>
+${o.tel&&o.tel!="—"?`<button class="btn w" onclick="toast('Enviado a ${o.cliente}: ${AVISO[o.estado]}')">Avisar al cliente por WhatsApp</button>`:""}
 <button class="btn g" onclick="go('#historial/${encodeURIComponent(o.placa)}')">Ver historial del vehículo</button></main>`},
 historial(q){q=q?decodeURIComponent(q):"HAB 4521";const h=hist[q]||[];const o=S.ordenes.filter(x=>x.placa==q);return head("Historial del vehículo","Todo lo que se le ha hecho, por placa")+`<main>
 <div class="search"><input id="q" value="${q}"><button class="btn p" style="width:auto;margin:0;padding:0 18px" onclick="go('#historial/'+encodeURIComponent($('q').value.toUpperCase()))">Buscar</button></div>
 <h2>${q}</h2><div class="tl">${o.map(x=>`<div class="card" onclick="go('#orden/${x.id}')"><div class="row"><b>Hoy</b><span class="chip s${x.estado}">${ESTADOS[x.estado]}</span></div><div class="muted">${x.falla}</div></div>`).join("")}
 ${h.map(x=>`<div class="card"><b>${x[0]}</b><div class="muted">${x[1]} · ${x[2]}</div></div>`).join("")}${!o.length&&!h.length?`<div class="muted">No hay registros para esta placa.</div>`:""}</div></main>`},
-reportes(){const t=S.ordenes.reduce((s,o)=>s+total(o),0);const d=[["Lun",62],["Mar",80],["Mié",45],["Jue",95],["Vie",70],["Sáb",88]];return head("Reportes","Semana del 2 al 7 de noviembre")+`<main>
+reportes(){const t=S.ordenes.reduce((s,o)=>s+total(o),0);const d=[["Lun",62],["Mar",80],["Mié",45],["Jue",95]];return head("Reportes","Esta semana · lunes 2 al jueves 5 de noviembre")+`<main>
 <div class="grid"><div class="stat accent"><b>${S.ordenes.length+23}</b><small>Vehículos atendidos</small></div><div class="stat"><b>${L(t+48250)}</b><small>Ingresos de la semana</small></div></div>
 <h2>Vehículos por día</h2><div class="card"><div style="display:flex;align-items:flex-end;gap:10px;height:140px">${d.map(x=>`<div style="flex:1;text-align:center"><div style="height:${x[1]}px;background:var(--brand);border-radius:8px 8px 4px 4px"></div><small class="muted">${x[0]}</small></div>`).join("")}</div></div>
 <h2>Servicios más pedidos</h2><div class="card"><table><tr><td>Cambio de aceite</td><td>14</td></tr><tr><td>Frenos</td><td>8</td></tr><tr><td>Suspensión</td><td>5</td></tr><tr><td>Diagnóstico computarizado</td><td>6</td></tr></table></div></main>`}};
 function crear(){const v=k=>$(k).value.trim();if(!v("f_placa")||!v("f_auto")){toast("Escribe al menos la placa y el vehículo");return}
-S.ordenes.unshift({id:S.next++,placa:v("f_placa").toUpperCase(),auto:v("f_auto"),cliente:v("f_cli")||"Cliente",tel:v("f_tel")||"—",km:v("f_km")||"—",falla:v("f_falla")||"Revisión general",estado:0,items:[]});save();toast("Orden creada. El cliente recibió su comprobante por WhatsApp");go("#ordenes")}
-function avanzar(id){const o=S.ordenes.find(x=>x.id==id);o.estado++;save();toast(o.estado==3?"¡Listo! Se avisó al cliente que puede recoger su vehículo":"Estado actualizado: "+ESTADOS[o.estado]);render()}
+S.ordenes.unshift({id:S.next++,placa:v("f_placa").toUpperCase(),auto:v("f_auto"),cliente:v("f_cli")||"Cliente",tel:v("f_tel")||"—",km:v("f_km")||"—",falla:v("f_falla")||"Revisión general",estado:0,items:[]});save();toast(v("f_tel")?"Orden creada. El cliente recibió su comprobante por WhatsApp":"Orden creada. Agrega el WhatsApp del cliente para avisarle");go("#ordenes")}
+const AVISO=["recibimos tu vehículo y lo estamos revisando","tu vehículo está en diagnóstico, pronto te enviamos la cotización","aprobaste la cotización, ya estamos reparando tu vehículo","¡tu vehículo está listo! Puedes pasar a recogerlo","gracias por tu visita, te recordaremos el próximo servicio"];
+function saludo(){const h=new Date().getHours();return h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches"}
+function agregar(id){const o=S.ordenes.find(x=>x.id==id);const t=$("q_txt").value.trim(),v=Math.round(Number($("q_val").value));if(!t||!(v>0)){toast("Escribe el repuesto o servicio y su precio");return}o.items.push([t,v]);save();toast("Agregado a la cotización");render()}
+function avanzar(id){const o=S.ordenes.find(x=>x.id==id);if(o.estado==1&&!o.items.length){toast("Agrega la cotización y envíala al cliente antes de reparar");return}o.estado++;save();
+toast(o.estado==2?"Cotización aprobada por el cliente: "+L(total(o)):o.estado==3?"¡Listo! Se avisó al cliente que puede recoger su vehículo":o.estado==4?"Vehículo entregado · pago de "+L(total(o))+" registrado":"Estado actualizado: "+ESTADOS[o.estado]);render()}
 function render(){const [r,arg]=(location.hash.slice(1)||"inicio").split("/");const f=V[r]||V.inicio;$("view").innerHTML=f(arg);window.scrollTo(0,0);
 const tabs=[["inicio","Inicio","home"],["ordenes","Órdenes","list"],["nueva","Recibir","plus"],["historial","Historial","car"],["reportes","Reportes","chart"]];
 $("nav").innerHTML=tabs.map(t=>`<button class="${t[0]==r?"on":""} ${t[0]=="nueva"?"fab":""}" onclick="go('#${t[0]}')">${ICON[t[2]]}${t[0]=="nueva"?"":t[1]}</button>`).join("")}
