@@ -62,23 +62,45 @@ bag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
 gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7.5 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 1.8 14H1.7a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 3.3 7.4a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 8.4 1.8V1.7a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.1a2 2 0 1 1 0 4z"/></svg>'};
 const seed={msgs:[["in","¡Hola! 👋 Soy Santi, el asistente de "+NEG+". ¿En qué te ayudo? Puedo mostrarte el menú, tomar tu pedido o decirte el horario."]],ped:[
 ["Karla Pineda","Pastel tres leches + 1 docena de cupcakes","Sáb 8 nov · 2:00 p. m.","Confirmado"],["Luis Andino","Pastel de chocolate","Vie 7 nov · 10:00 a. m.","Confirmado"],["Daniela Cruz","Galletas de mantequilla (3 bolsas)","Hoy · 5:30 p. m.","Por confirmar"]],step:null,item:null};
-let S;try{S=JSON.parse(localStorage.getItem("santi"))}catch(e){}if(!S)S=seed;
+let S;try{S=JSON.parse(localStorage.getItem("santi2"))}catch(e){}if(!S)S=JSON.parse(JSON.stringify(seed));
 if(location.search.includes("demo"))S={...seed,msgs:[seed.msgs[0],["out","Hola, ¿tienen pastel tres leches para el sábado?"],["in","¡Hola! 😊 Sí, tenemos pastel tres leches de 12 porciones. ¿Quieres que te lo aparte para el sábado?"],["out","Sí, por favor. A nombre de Karla"],["in","¡Listo, Karla! ✅ Tu pedido quedó registrado:\n• Pastel tres leches (12 porciones)\n• Entrega: sábado 8 de noviembre\nTe escribimos un día antes para confirmar. 🎂"],["out","¡Gracias! 🙌"]]};
-const save=()=>{try{localStorage.setItem("santi",JSON.stringify(S))}catch(e){}};
+const save=()=>{try{localStorage.setItem("santi2",JSON.stringify(S))}catch(e){}};
 const $=id=>document.getElementById(id);const go=h=>location.hash=h;
 function toast(t){$("toast").textContent=t;$("toast").classList.add("on");setTimeout(()=>$("toast").classList.remove("on"),2200)}
 const hora=()=>{const d=new Date();return d.getHours()+":"+String(d.getMinutes()).padStart(2,"0")};
-function brain(t){t=t.toLowerCase();
-if(S.step=="nombre"){S.step="fecha";S.cli=t.replace(/\b\w/g,c=>c.toUpperCase());return "Gracias, "+S.cli+". ¿Para qué día y hora lo necesitas?"}
-if(S.step=="fecha"){S.step=null;S.ped.unshift([S.cli,S.item,t,"Confirmado"]);save();return "¡Listo! ✅ Tu pedido quedó registrado:\n• "+S.item+"\n• Entrega: "+t+"\nTe escribimos un día antes para confirmar. ¡Gracias por tu compra! 🎂"}
-const n=CAT.findIndex(c=>t.includes(c[0].split(" ")[1].toLowerCase())||t.includes(c[0].split(" ")[0].toLowerCase().slice(0,6)));
-if(n>=0&&/(quiero|pedir|pedido|ordenar|encargar|me das|uno|una)/.test(t)||S.step=="item"&&n>=0){S.item=CAT[n][0];S.step="nombre";return "¡Excelente elección! 😋 "+CAT[n][0]+".\n¿A nombre de quién hago el pedido?"}
-if(/(menu|menú|precio|cat[aá]logo|tienen|venden|que hay|qué hay)/.test(t))return "Este es nuestro menú 🍰\n"+CAT.map(c=>"• "+c[0]+" — L "+c[1]).join("\n")+"\n¿Cuál te gustaría pedir?";
-if(/(pedido|pedir|ordenar|encargar|quiero)/.test(t)){S.step="item";return "¡Con gusto! ¿Qué te gustaría pedir? Tenemos pasteles, cupcakes y galletas."}
-if(/(horario|hora|abren|cierran|abierto)/.test(t))return "Abrimos de lunes a sábado de 8:00 a. m. a 6:00 p. m. 🕗 Los pedidos por aquí los recibo las 24 horas.";
-if(/(donde|dónde|ubicaci|direcci|entrega|domicilio)/.test(t))return "Estamos en Col. Las Minitas, Tegucigalpa 📍 y hacemos entregas a domicilio en toda la ciudad.";
+const KEYS=[["chocolate"],["tres leches","3 leches"],["cupcake","quequito"],["galleta"]];
+const norm=t=>t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const DIA=/\b(pasado manana|hoy|manana|lunes|martes|miercoles|jueves|viernes|sabado|domingo|\d{1,2}\s*(de\s+)?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|\d{1,2}\/\d{1,2})\b/;
+const ACENTO={sabado:"sábado",miercoles:"miércoles",manana:"mañana"};
+const producto=t=>CAT.findIndex((c,i)=>KEYS[i].some(k=>t.includes(k)));
+const pregunta=t=>/\?|^(hacen|tienen|cual|cuanto|como|donde|cuando|a que|puedo|se puede|aceptan|envian|llevan)\b/.test(t);
+function faq(t){
+if(/(horario|a que hora|abren|cierran|abierto)/.test(t))return "Abrimos de lunes a sábado de 8:00 a. m. a 6:00 p. m. 🕗 Los pedidos por aquí los recibo las 24 horas.";
+if(/(donde|ubicad|direcci|entrega|domicilio|envio|envian|llevan)/.test(t))return "Sí 🚚 Hacemos entregas a domicilio en toda Tegucigalpa (envío L 60). También puedes recoger en Col. Las Minitas 📍";
+if(/(menu|precio|catalogo|cuanto|que tienen|que hay|que venden|sabores)/.test(t))return "Este es nuestro menú 🍰\n"+CAT.map(c=>"• "+c[0]+" — L "+c[1]).join("\n");
+if(/(persona|humano|asesor|encargad)/.test(t))return "Claro 🙋 Le aviso a una persona del equipo y te escribe por aquí en unos minutos.";
+return null}
+const pendiente=()=>S.step=="nombre"?"¿A nombre de quién hago el pedido?":S.step=="fecha"?"¿Para qué día y hora lo necesitas?":"¿Qué te gustaría pedir?";
+const limpiar=()=>{S.step=null;S.item=null;S.fecha=null;S.cli=null};
+const para=f=>/^(hoy|mañana|pasado)/.test(f)?" para "+f:" para el "+f;
+function iniciar(n,t){S.item=CAT[n][0];const d=t.match(DIA);if(d)S.fecha=d[0].replace(/\w+/g,w=>ACENTO[w]||w);S.step="nombre";
+return "¡Excelente elección! 😋 "+CAT[n][0]+" — L "+CAT[n][1]+(S.fecha?para(S.fecha):"")+".\n¿A nombre de quién hago el pedido?"}
+function confirmar(){const p=CAT.find(c=>c[0]==S.item);S.ped.unshift([S.cli,S.item,S.fecha,"Confirmado"]);
+const r="¡Listo, "+S.cli.split(" ")[0]+"! ✅ Tu pedido quedó registrado:\n• "+S.item+" — L "+p[1]+"\n• Entrega: "+S.fecha+"\nTe escribimos un día antes para confirmar. ¡Gracias por tu compra! 🎂";limpiar();save();return r}
+function brain(raw){const t=norm(raw.trim());const n=producto(t);
+if(S.step&&/(cancelar|cancela|ya no|olvidalo)/.test(t)){limpiar();return "Listo, cancelé el pedido. ¿Te ayudo con algo más? 😊"}
+// Una pregunta en medio del pedido: la respondo y retomo lo que faltaba
+if(S.step&&!(S.step=="item"&&n>=0)&&(pregunta(t)||faq(t)))return (faq(t)||"Buena pregunta 🙂 Una persona del equipo te la responde enseguida.")+"\n\nSigamos con tu pedido: "+pendiente();
+if(S.step=="item"){if(n>=0)return iniciar(n,t);if(/pastel/.test(t))return "¿De qué sabor? Tenemos chocolate (L 650) y tres leches (L 600).";return "Tenemos pasteles de chocolate o tres leches, cupcakes y galletas. ¿Cuál te gustaría?"}
+if(S.step=="nombre"){const m=raw.match(/(?:a nombre de|me llamo|mi nombre es|soy)\s+(.+)/i);const nom=(m?m[1]:raw.replace(/^(s[ií]|claro|ok|dale|listo)[,.!\s]*/i,"")).replace(/[^\p{L} ]/gu,"").trim();
+if(!nom||nom.split(/\s+/).length>4)return "¿Me confirmas solo tu nombre, por favor? Por ejemplo: Karla Pineda";
+S.cli=nom.replace(/(^|\s)\p{L}/gu,c=>c.toUpperCase());if(S.fecha)return confirmar();S.step="fecha";return "Gracias, "+S.cli.split(" ")[0]+". ¿Para qué día y hora lo necesitas?"}
+if(S.step=="fecha"){S.fecha=raw.trim();return confirmar()}
+if(n>=0&&/(quiero|pedir|pedido|ordenar|encargar|apart|me das|tienen|hay|para el|para hoy|para manana|\bun\b|\buna\b)/.test(t))return iniciar(n,t);
+const f=faq(t);if(f)return f+(f.startsWith("Este es nuestro menú")?"\n¿Cuál te gustaría pedir?":"");
+if(/(pedido|pedir|ordenar|encargar|quiero)/.test(t)){S.step="item";return /pastel/.test(t)?"¡Con gusto! ¿De qué sabor? Tenemos chocolate (L 650) y tres leches (L 600).":"¡Con gusto! ¿Qué te gustaría pedir? Tenemos pasteles, cupcakes y galletas."}
 if(/(hola|buenas|buenos)/.test(t))return "¡Hola! 😊 ¿Quieres ver el menú o hacer un pedido?";
-if(/(gracias)/.test(t))return "¡A ti! Aquí estoy cuando me necesites. 💚";
+if(/gracias/.test(t))return "¡A ti! Aquí estoy cuando me necesites. 💚";
 return "Puedo ayudarte con el menú, pedidos, horario y entregas. Si prefieres, te comunico con una persona del equipo. 🙋"}
 function send(txt){txt=(txt||$("inp").value).trim();if(!txt)return;S.msgs.push(["out",txt]);const r=brain(txt);save();render();
 const box=$("msgs");box.insertAdjacentHTML("beforeend",'<div class="typing" id="typ">Santi está escribiendo…</div>');box.scrollTop=1e6;
