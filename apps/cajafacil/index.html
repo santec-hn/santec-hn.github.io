@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CajaFácil — Punto de venta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--dark:#14182B;--brand:#FACC15;--bg:#F5F5F0;--ink:#14182B;--soft:#5F6273;--line:#E6E5DD;--ok:#15803D;--danger:#B91C1C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#DEDDD4;color:var(--ink);display:flex;justify-content:center;min-height:100vh}
+.app{width:100%;max-width:430px;min-height:100vh;background:var(--bg);padding-bottom:160px}
+header{background:var(--dark);color:#fff;padding:22px 20px 22px;border-radius:0 0 26px 26px}
+.top{display:flex;justify-content:space-between;align-items:center}.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px}.logo span{color:var(--brand)}
+.shift{font-size:12px;font-weight:600;background:rgba(250,204,21,.18);color:var(--brand);padding:5px 10px;border-radius:999px}
+header h1{font-size:24px;margin-top:14px;font-family:'Space Grotesk',sans-serif}header p{opacity:.75;font-size:14px;margin-top:4px}
+.back{background:none;border:none;color:#fff;font:inherit;font-size:14px;cursor:pointer}
+main{padding:16px}
+.cats{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px}.cats button{flex:none;border:none;border-radius:999px;padding:9px 14px;font:inherit;font-size:13px;font-weight:600;background:#fff;cursor:pointer;color:var(--soft)}
+.cats button.on{background:var(--dark);color:#fff}
+.prods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.prod{background:#fff;border:none;border-radius:16px;padding:12px 8px;text-align:center;cursor:pointer;font:inherit;box-shadow:0 2px 8px rgba(0,0,0,.05);position:relative}
+.prod .e{font-size:32px;display:block}.prod b{display:block;font-size:13px;margin-top:6px;line-height:1.2}.prod small{color:var(--soft);font-size:12px}
+.prod .q{position:absolute;top:6px;right:6px;background:var(--brand);color:var(--dark);font-weight:800;font-size:12px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center}
+.cart{position:fixed;bottom:74px;width:100%;max-width:430px;padding:0 12px}
+.cart button{width:100%;border:none;border-radius:16px;background:var(--brand);color:var(--dark);font:inherit;font-weight:800;font-size:16px;padding:16px 18px;display:flex;justify-content:space-between;cursor:pointer;box-shadow:0 6px 18px rgba(202,138,4,.35)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}.stat b{font-family:'Space Grotesk',sans-serif;font-size:26px;display:block}.stat small{color:var(--soft);font-size:13px}
+.stat.y{background:var(--brand)}.stat.d{background:var(--dark);color:#fff}.stat.d small{color:#C9CBD6}
+h2{font-size:17px;margin:20px 4px 10px;display:flex;justify-content:space-between;align-items:center}
+.card{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.muted{color:var(--soft);font-size:13px;margin-top:3px}
+.chip{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap;background:#DCFCE7;color:var(--ok)}.chip.low{background:#FEE2E2;color:var(--danger)}
+table{width:100%;border-collapse:collapse;font-size:14px}td{padding:10px 2px;border-bottom:1px dashed var(--line)}td:last-child{text-align:right;font-weight:600}.tot td{border:none;font-size:20px;font-weight:800}
+.pay{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.pay button{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 4px;font:inherit;font-weight:600;font-size:13px;cursor:pointer}.pay button.sel{border-color:var(--dark);background:var(--dark);color:#fff}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;margin-top:14px}
+.btn.d{background:var(--dark);color:#fff}.btn.w{background:#25D366;color:#fff}.btn.g{background:#fff;border:1.5px solid var(--line)}
+.ticket{background:#fff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}.ticket .ok{width:64px;height:64px;border-radius:50%;background:#DCFCE7;color:var(--ok);display:grid;place-items:center;font-size:32px;margin:0 auto 10px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:130px}.bars div{flex:1;text-align:center}.bars i{display:block;background:var(--dark);border-radius:6px 6px 3px 3px}.bars i.hi{background:#CA8A04}
+nav{position:fixed;bottom:0;width:100%;max-width:430px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 0 14px}
+nav button{background:none;border:none;font:inherit;font-size:11px;color:var(--soft);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}nav button.on{color:var(--dark);font-weight:700}nav svg{width:24px;height:24px}
+.toast{position:fixed;bottom:150px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;width:max-content;max-width:90%}.toast.on{opacity:1}
+.shot .app,.shot nav,.shot .cart{max-width:none}
+</style>
+</head>
+<body>
+<div class="app"><div id="view"></div><div class="cart" id="cart"></div><nav id="nav"></nav><div class="toast" id="toast"></div></div>
+<script>
+if(location.search.includes("shot"))document.documentElement.classList.add("shot");
+const ICON={cart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11.5l2-8H6.2"/></svg>',
+box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>',
+chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+receipt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>'};
+const P=[["Coca-Cola 600 ml","🥤","Bebidas",25,48],["Agua pura 1 L","💧","Bebidas",15,60],["Café molido 400 g","☕","Abarrotes",95,14],["Arroz 5 lb","🍚","Abarrotes",62,22],["Frijoles 2 lb","🫘","Abarrotes",48,5],["Huevos (cartón)","🥚","Lácteos",110,9],["Leche 1 L","🥛","Lácteos",34,18],["Pan de molde","🍞","Panadería",58,3],["Jabón de baño","🧼","Limpieza",22,30],["Galletas","🍪","Snacks",18,40],["Churros","🌽","Snacks",12,55],["Detergente 1 kg","🧺","Limpieza",79,11]];
+let S;try{S=JSON.parse(localStorage.getItem("caja"))}catch(e){}if(!S)S={cart:{},cat:"Todos",pay:"Efectivo",ventas:[["10:14",3,186],["10:32",1,95],["11:05",5,243]],stock:P.map(p=>p[4])};
+if(location.search.includes("demo"))S.cart={0:2,3:1,5:1,9:3};
+const save=()=>{try{localStorage.setItem("caja",JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);const go=h=>location.hash=h;const L=n=>"L "+n.toLocaleString("es-HN");
+function toast(t){$("toast").textContent=t;$("toast").classList.add("on");setTimeout(()=>$("toast").classList.remove("on"),2200)}
+const tot=()=>Object.entries(S.cart).reduce((s,[i,q])=>s+P[i][3]*q,0);const cnt=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
+function head(t,s,back){return `<header><div class="top">${back?`<button class="back" onclick="history.back()">← Atrás</button>`:`<div class="logo">Caja<span>Fácil</span></div>`}<span class="shift">Caja 1 · Turno abierto</span></div><h1>${t}</h1>${s?`<p>${s}</p>`:""}</header>`}
+const V={
+vender(){const cats=["Todos",...new Set(P.map(p=>p[2]))];return head("Nueva venta","Mini Súper La Bendición")+`<main><div class="cats">${cats.map(c=>`<button class="${S.cat==c?"on":""}" onclick="S.cat='${c}';render()">${c}</button>`).join("")}</div>
+<div class="prods">${P.map((p,i)=>S.cat=="Todos"||S.cat==p[2]?`<button class="prod" onclick="add(${i})">${S.cart[i]?`<span class="q">${S.cart[i]}</span>`:""}<span class="e">${p[1]}</span><b>${p[0]}</b><small>${L(p[3])}</small></button>`:"").join("")}</div></main>`},
+cobrar(){const t=tot();return head("Cobrar",cnt()+" productos",true)+`<main><div class="card"><table>${Object.entries(S.cart).map(([i,q])=>`<tr><td>${q} × ${P[i][0]}</td><td>${L(P[i][3]*q)}</td></tr>`).join("")}<tr class="tot"><td>Total</td><td>${L(t)}</td></tr></table></div>
+<h2>Forma de pago</h2><div class="pay">${["Efectivo","Tarjeta","Transferencia"].map(m=>`<button class="${S.pay==m?"sel":""}" onclick="S.pay='${m}';render()">${m}</button>`).join("")}</div>
+${S.pay=="Efectivo"?`<div class="card" style="margin-top:12px"><div class="row"><span>Recibido</span><b>${L(Math.ceil(t/100)*100)}</b></div><div class="row" style="margin-top:6px"><span>Cambio</span><b style="color:var(--ok)">${L(Math.ceil(t/100)*100-t)}</b></div></div>`:""}
+<button class="btn d" onclick="pagar()">Confirmar pago de ${L(t)}</button></main>`},
+ticket(){const v=S.ventas[S.ventas.length-1];return head("Venta registrada","",true)+`<main><div class="ticket"><div class="ok">✓</div><h2 style="justify-content:center;margin:4px">${L(v[2])}</h2><div class="muted">${v[1]} productos · ${S.pay} · ${v[0]}</div>
+<div class="muted" style="margin-top:10px">El inventario se actualizó automáticamente</div></div>
+<button class="btn w" onclick="toast('Factura enviada por WhatsApp')">Enviar factura por WhatsApp</button><button class="btn g" onclick="toast('Imprimiendo ticket…')">Imprimir ticket</button><button class="btn d" onclick="go('#vender')">Nueva venta</button></main>`},
+inventario(){const low=P.filter((p,i)=>S.stock[i]<=10).length;return head("Inventario",P.length+" productos · "+low+" por agotarse")+`<main>
+${P.map((p,i)=>({p,i})).sort((a,b)=>S.stock[a.i]-S.stock[b.i]).map(({p,i})=>`<div class="card"><div class="row"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:28px">${p[1]}</span><div><b>${p[0]}</b><div class="muted">${p[2]} · ${L(p[3])}</div></div></div><span class="chip ${S.stock[i]<=10?"low":""}">${S.stock[i]<=10?"Quedan "+S.stock[i]:S.stock[i]+" en stock"}</span></div></div>`).join("")}</main>`},
+reportes(){const vt=S.ventas.reduce((s,v)=>s+v[2],0)+8420;const h=[[7,40],[8,62],[9,55],[10,90],[11,78],[12,120],[13,70],[14,58]];return head("Reportes","Hoy, jueves 5 de noviembre")+`<main>
+<div class="grid"><div class="stat y"><b>${L(vt)}</b><small>Vendido hoy</small></div><div class="stat d"><b>${S.ventas.length+64}</b><small>Ventas</small></div><div class="stat"><b>${L(Math.round(vt/(S.ventas.length+64)))}</b><small>Ticket promedio</small></div><div class="stat"><b>${P.filter((p,i)=>S.stock[i]<=10).length}</b><small>Productos por pedir</small></div></div>
+<h2>Ventas por hora</h2><div class="card"><div class="bars">${h.map(x=>`<div><i class="${x[1]>=100?"hi":""}" style="height:${x[1]}px"></i><small class="muted">${x[0]}h</small></div>`).join("")}</div></div>
+<h2>Lo más vendido</h2><div class="card"><table><tr><td>🥤 Coca-Cola 600 ml</td><td>38</td></tr><tr><td>🍪 Galletas</td><td>27</td></tr><tr><td>💧 Agua pura 1 L</td><td>22</td></tr><tr><td>🍚 Arroz 5 lb</td><td>15</td></tr></table></div></main>`}};
+function add(i){S.cart[i]=(S.cart[i]||0)+1;save();render()}
+function pagar(){const d=new Date();S.ventas.push([d.getHours()+":"+String(d.getMinutes()).padStart(2,"0"),cnt(),tot()]);Object.entries(S.cart).forEach(([i,q])=>S.stock[i]=Math.max(0,S.stock[i]-q));S.cart={};save();go("#ticket")}
+function render(){const r=(location.hash.slice(1)||"vender");$("view").innerHTML=(V[r]||V.vender)();scrollTo(0,0);
+$("cart").innerHTML=r=="vender"&&cnt()?`<button onclick="go('#cobrar')"><span>Cobrar · ${cnt()} productos</span><span>${L(tot())}</span></button>`:"";
+const t=[["vender","Vender","cart"],["inventario","Inventario","box"],["reportes","Reportes","chart"]];
+$("nav").innerHTML=t.map(x=>`<button class="${x[0]==r||(x[0]=="vender"&&(r=="cobrar"||r=="ticket"))?"on":""}" onclick="go('#${x[0]}')">${ICON[x[2]]}${x[1]}</button>`).join("")}
+addEventListener("hashchange",render);render();
+</script>
+</body>
+</html>

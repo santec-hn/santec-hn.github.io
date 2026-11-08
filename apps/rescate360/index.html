@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rescate 360 — Emergencias</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--brand:#B91C1C;--dark:#161A23;--bg:#F4F4F6;--card:#fff;--ink:#161A23;--soft:#5E6475;--line:#E4E5EA;--ok:#15803D;--warn:#B45309;--info:#1D4ED8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#D9DBE1;color:var(--ink);display:flex;justify-content:center;min-height:100vh}
+.app{width:100%;max-width:430px;min-height:100vh;background:var(--bg);padding-bottom:84px}
+header{background:var(--dark);color:#fff;padding:22px 20px 24px;border-radius:0 0 26px 26px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:21px}.logo span{color:#F87171}
+.live{font-size:12px;font-weight:600;background:rgba(248,113,113,.18);color:#FCA5A5;padding:5px 10px;border-radius:999px}
+.live:before{content:"● "}
+header h1{font-size:24px;margin-top:16px;font-family:'Space Grotesk',sans-serif}header p{opacity:.75;font-size:14px;margin-top:4px}
+.back{background:none;border:none;color:#fff;font:inherit;font-size:14px;cursor:pointer}
+main{padding:18px 16px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.stat b{font-family:'Space Grotesk',sans-serif;font-size:26px;display:block}.stat small{font-size:12px;color:var(--soft)}
+.stat.red{background:var(--brand);color:#fff}.stat.red small{color:#fff;opacity:.85}
+h2{font-size:17px;margin:20px 4px 10px;display:flex;justify-content:space-between;align-items:center}
+h2 a{font-size:13px;color:var(--info);cursor:pointer}
+.map{border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);background:#E8EDE6;position:relative;height:230px}
+.map svg{width:100%;height:100%;display:block}
+.pin{position:absolute;transform:translate(-50%,-100%);font-size:11px;font-weight:700;color:#fff;padding:5px 8px;border-radius:10px 10px 10px 2px;cursor:pointer;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.pin.u{background:var(--info);border-radius:999px}
+.card{background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.05);cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.muted{color:var(--soft);font-size:13px;margin-top:4px}
+.chip{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.c0{background:#FEE2E2;color:var(--brand)}.c1{background:#FEF3C7;color:var(--warn)}.c2{background:#DBEAFE;color:var(--info)}.c3{background:#E0E7FF;color:#4338CA}.c4{background:#DCFCE7;color:var(--ok)}
+.ok{background:#DCFCE7;color:var(--ok)}.busy{background:#FEF3C7;color:var(--warn)}.off{background:#EEE;color:#666}
+.type{display:flex;gap:12px;align-items:center}.type .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:none}
+nav{position:fixed;bottom:0;width:100%;max-width:430px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 0 14px}
+nav button{background:none;border:none;font:inherit;font-size:11px;color:var(--soft);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+nav button.on{color:var(--brand);font-weight:700}nav svg{width:24px;height:24px}
+.fab{width:56px;height:56px;border-radius:50%;background:var(--brand);color:#fff!important;margin-top:-30px;box-shadow:0 6px 16px rgba(185,28,28,.45);justify-content:center;font-weight:800!important;font-size:13px!important}
+.sos{width:220px;height:220px;border-radius:50%;margin:10px auto 6px;background:radial-gradient(circle,#EF4444,#B91C1C);color:#fff;display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-size:44px;font-weight:700;box-shadow:0 0 0 16px rgba(239,68,68,.15),0 0 0 34px rgba(239,68,68,.08);border:none;cursor:pointer}
+.sos small{display:block;font-size:14px;font-family:Inter,sans-serif;font-weight:500;opacity:.9}
+.types{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+.types button{background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px 10px;font:inherit;font-weight:600;cursor:pointer;display:flex;gap:8px;align-items:center}
+.types button.sel{border-color:var(--brand);background:#FEF2F2;color:var(--brand)}
+.loc{background:#fff;border-radius:14px;padding:12px 14px;margin-top:14px;font-size:14px;display:flex;gap:10px;align-items:center}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;margin-top:14px}
+.btn.r{background:var(--brand);color:#fff}.btn.d{background:var(--dark);color:#fff}.btn.g{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.steps{display:flex;gap:6px;margin:4px 0 14px}.steps div{flex:1;text-align:center;font-size:10.5px;color:var(--soft)}
+.steps i{display:block;height:6px;border-radius:6px;background:var(--line);margin-bottom:6px}.steps .on i{background:var(--brand)}.steps .on{color:var(--ink);font-weight:600}
+.log{border-left:3px solid var(--line);margin-left:6px;padding-left:14px}.log p{font-size:13px;margin-bottom:10px}.log b{font-size:12px;color:var(--soft);display:block}
+.barrow{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:13px}.barrow span{width:110px}.barrow div{flex:1;background:var(--line);height:12px;border-radius:6px;overflow:hidden}.barrow i{display:block;height:100%;background:var(--brand)}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;width:max-content;max-width:90%}.toast.on{opacity:1}
+.shot .app,.shot nav{max-width:none}
+</style>
+</head>
+<body>
+<div class="app"><div id="view"></div><nav id="nav"></nav><div class="toast" id="toast"></div></div>
+<script>
+if(location.search.includes("shot"))document.documentElement.classList.add("shot");
+const EST=["Reportado","Unidad asignada","En camino","En escena","Cerrado"];
+const TIPOS={Incendio:["🔥","#FEE2E2"],"Accidente vial":["🚗","#FEF3C7"],"Emergencia médica":["🚑","#DBEAFE"],Rescate:["🪢","#E0E7FF"]};
+const ICON={home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>',
+list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 8v5M12 16h.01"/></svg>',
+truck:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 16V6h11v10M13 9h5l3 4v3h-8"/><circle cx="6.5" cy="17" r="1.8"/><circle cx="17.5" cy="17" r="1.8"/></svg>',
+chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>'};
+const seed={inc:[
+{id:311,tipo:"Incendio",lugar:"Col. Kennedy, bloque 4",hora:"10:42",estado:2,unidad:"M-12",x:34,y:38,log:[["10:42","Reporte ciudadano con foto y ubicación GPS"],["10:43","Unidad M-12 asignada por despacho"],["10:44","M-12 en camino · llegada estimada 6 min"]]},
+{id:312,tipo:"Accidente vial",lugar:"Bulevar Morazán, frente a gasolinera",hora:"10:55",estado:1,unidad:"A-03",x:66,y:58,log:[["10:55","Reporte recibido por llamada"],["10:56","Ambulancia A-03 asignada"]]},
+{id:313,tipo:"Emergencia médica",lugar:"Mercado Zonal Belén",hora:"11:02",estado:0,unidad:null,x:52,y:24,log:[["11:02","Reporte desde la app ciudadana"]]}],
+uni:[["M-12","Motobomba","Estación Central","busy"],["A-03","Ambulancia","Estación Central","busy"],["M-07","Motobomba","Estación Norte","ok"],["R-02","Unidad de rescate","Estación Sur","ok"],["A-05","Ambulancia","Estación Norte","ok"],["M-15","Cisterna","Estación Sur","off"]],next:314,tipo:"Incendio"};
+let S;try{S=JSON.parse(localStorage.getItem("r360"))}catch(e){}if(!S)S=seed;
+const save=()=>{try{localStorage.setItem("r360",JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);const go=h=>location.hash=h;
+function toast(t){$("toast").textContent=t;$("toast").classList.add("on");setTimeout(()=>$("toast").classList.remove("on"),2400)}
+function head(t,s,back){return `<header><div class="top">${back?`<button class="back" onclick="history.back()">← Atrás</button>`:`<div class="logo">Rescate <span>360</span></div>`}<span class="live">En vivo</span></div><h1>${t}</h1>${s?`<p>${s}</p>`:""}</header>`}
+function map(){return `<div class="map"><svg viewBox="0 0 400 230" preserveAspectRatio="none"><rect width="400" height="230" fill="#E6ECE3"/><path d="M0 70 L400 90 M0 160 L400 140 M90 0 L120 230 M260 0 L240 230 M330 0 L380 230" stroke="#fff" stroke-width="12"/><path d="M0 115 Q200 60 400 120" stroke="#FCD34D" stroke-width="8" fill="none"/><rect x="150" y="170" width="60" height="40" rx="6" fill="#CFE3C7"/><rect x="20" y="10" width="50" height="40" rx="6" fill="#CFE3C7"/></svg>
+${S.inc.filter(i=>i.estado<4).map(i=>`<div class="pin" style="left:${i.x}%;top:${i.y}%;background:${i.estado==0?"#B91C1C":i.estado<3?"#B45309":"#4338CA"}" onclick="go('#incidente/${i.id}')">${TIPOS[i.tipo][0]} #${i.id}</div>`).join("")}
+<div class="pin u" style="left:20%;top:72%">🚒 M-07</div><div class="pin u" style="left:84%;top:30%">🚑 A-05</div></div>`}
+function inc(i){return `<div class="card" onclick="go('#incidente/${i.id}')"><div class="row"><div class="type"><div class="ic" style="background:${TIPOS[i.tipo][1]}">${TIPOS[i.tipo][0]}</div><div><b>${i.tipo}</b><div class="muted">${i.lugar} · ${i.hora}</div></div></div><span class="chip c${i.estado}">${EST[i.estado]}</span></div></div>`}
+const V={
+inicio(){const a=S.inc.filter(i=>i.estado<4);return head("Centro de mando","Cuerpo de Bomberos · Distrito Central")+`<main><div class="grid">
+<div class="stat red"><b>${a.length}</b><small>Emergencias activas</small></div><div class="stat"><b>${S.uni.filter(u=>u[3]=="ok").length}</b><small>Unidades libres</small></div><div class="stat"><b>7 min</b><small>Respuesta promedio</small></div></div>
+<h2>Mapa en tiempo real</h2>${map()}<h2>Emergencias activas <a onclick="go('#incidentes')">Ver todas</a></h2>${a.map(inc).join("")}</main>`},
+incidentes(){return head("Emergencias",S.inc.length+" registradas hoy")+`<main>${S.inc.map(inc).join("")}</main>`},
+reportar(){return head("Reportar emergencia","Para ciudadanos · ayuda en un toque")+`<main style="text-align:center">
+<button class="sos" onclick="reportar()">SOS<small>Toca para pedir ayuda</small></button>
+<div class="types">${Object.keys(TIPOS).map(t=>`<button class="${S.tipo==t?"sel":""}" onclick="S.tipo='${t}';render()">${TIPOS[t][0]} ${t}</button>`).join("")}</div>
+<div class="loc">📍 <div style="text-align:left"><b>Ubicación detectada</b><div class="muted" style="margin:0">Col. Palmira, Tegucigalpa · precisión 8 m</div></div></div>
+<button class="btn g">📷 Adjuntar foto o video</button></main>`},
+incidente(id){const i=S.inc.find(x=>x.id==id);if(!i)return V.inicio();return head(TIPOS[i.tipo][0]+" "+i.tipo,"Incidente #"+i.id+" · "+i.lugar,true)+`<main>
+<div class="steps">${EST.map((e,k)=>`<div class="${k<=i.estado?"on":""}"><i></i>${e}</div>`).join("")}</div>
+<div class="card"><div class="row"><div><div class="muted" style="margin:0">Unidad asignada</div><b>${i.unidad||"Sin asignar"}</b></div><div style="text-align:right"><div class="muted" style="margin:0">Reportado</div><b>${i.hora}</b></div></div></div>
+${!i.unidad?`<h2>Unidades disponibles</h2>${S.uni.filter(u=>u[3]=="ok").map(u=>`<div class="card" onclick="asignar(${i.id},'${u[0]}')"><div class="row"><div><b>🚒 ${u[0]} · ${u[1]}</b><div class="muted">${u[2]} · a ${3+u[0].length} min</div></div><span class="chip c2">Asignar</span></div></div>`).join("")}`:
+i.estado<4?`<button class="btn r" onclick="avanzar(${i.id})">Marcar: ${EST[i.estado+1]}</button>`:""}
+<h2>Bitácora</h2><div class="card"><div class="log">${i.log.map(l=>`<p><b>${l[0]}</b>${l[1]}</p>`).join("")}</div></div>
+<button class="btn d" onclick="toast('Reporte PDF generado para el expediente')">Generar informe del incidente</button></main>`},
+unidades(){return head("Unidades","Estado de la flota en tiempo real")+`<main>${S.uni.map(u=>`<div class="card"><div class="row"><div><b>${u[1]=="Ambulancia"?"🚑":"🚒"} ${u[0]} · ${u[1]}</b><div class="muted">${u[2]}</div></div><span class="chip ${u[3]}">${{ok:"Disponible",busy:"En servicio",off:"Mantenimiento"}[u[3]]}</span></div></div>`).join("")}</main>`},
+estadisticas(){const d=[["Incendios",38],["Accidentes",64],["Médicas",82],["Rescates",21]];return head("Estadísticas","Octubre 2026")+`<main><div class="grid">
+<div class="stat red"><b>205</b><small>Emergencias atendidas</small></div><div class="stat"><b>7 min</b><small>Tiempo de respuesta</small></div><div class="stat"><b>98%</b><small>Con informe completo</small></div></div>
+<h2>Por tipo de emergencia</h2><div class="card">${d.map(x=>`<div class="barrow"><span>${x[0]}</span><div><i style="width:${x[1]}%"></i></div><b>${x[1]}</b></div>`).join("")}</div>
+<h2>Zonas con más reportes</h2><div class="card"><div class="barrow"><span>Col. Kennedy</span><div><i style="width:70%"></i></div></div><div class="barrow"><span>Centro</span><div><i style="width:55%"></i></div></div><div class="barrow"><span>Col. Palmira</span><div><i style="width:30%"></i></div></div></div></main>`}};
+function now(){const d=new Date();return d.getHours()+":"+String(d.getMinutes()).padStart(2,"0")}
+function reportar(){const i={id:S.next++,tipo:S.tipo,lugar:"Col. Palmira, Tegucigalpa",hora:now(),estado:0,unidad:null,x:44,y:62,log:[[now(),"Reporte desde la app ciudadana con ubicación GPS"]]};S.inc.unshift(i);save();toast("¡Ayuda en camino! Tu reporte llegó al centro de mando");go("#incidente/"+i.id)}
+function asignar(id,u){const i=S.inc.find(x=>x.id==id);i.unidad=u;i.estado=1;i.log.push([now(),"Unidad "+u+" asignada por despacho"]);S.uni.find(x=>x[0]==u)[3]="busy";save();toast("Unidad "+u+" notificada");render()}
+function avanzar(id){const i=S.inc.find(x=>x.id==id);i.estado++;i.log.push([now(),EST[i.estado]]);if(i.estado==4){const u=S.uni.find(x=>x[0]==i.unidad);if(u)u[3]="ok"}save();render()}
+function render(){const [r,a]=(location.hash.slice(1)||"inicio").split("/");$("view").innerHTML=(V[r]||V.inicio)(a);scrollTo(0,0);
+const t=[["inicio","Mando","home"],["incidentes","Emergencias","list"],["reportar","SOS",""],["unidades","Unidades","truck"],["estadisticas","Datos","chart"]];
+$("nav").innerHTML=t.map(x=>`<button class="${x[0]==r?"on":""} ${x[0]=="reportar"?"fab":""}" onclick="go('#${x[0]}')">${x[2]?ICON[x[2]]+x[1]:x[1]}</button>`).join("")}
+addEventListener("hashchange",render);render();
+</script>
+</body>
+</html>

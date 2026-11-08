@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MediCita — Clínicas y consultorios</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--brand:#6D28D9;--brand2:#EC4899;--bg:#F5F3FA;--ink:#1E1633;--soft:#625B74;--line:#E6E1F0;--ok:#15803D;--warn:#B45309;--info:#1D4ED8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#DCD7E8;color:var(--ink);display:flex;justify-content:center;min-height:100vh}
+.app{width:100%;max-width:430px;min-height:100vh;background:var(--bg);padding-bottom:84px}
+header{background:linear-gradient(150deg,#6D28D9,#4C1D95);color:#fff;padding:22px 20px 24px;border-radius:0 0 26px 26px}
+.top{display:flex;justify-content:space-between;align-items:center}.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px}.logo span{color:#F9A8D4}
+.avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-weight:700;font-size:14px}
+header h1{font-size:24px;margin-top:16px;font-family:'Space Grotesk',sans-serif}header p{opacity:.8;font-size:14px;margin-top:4px}
+.back{background:none;border:none;color:#fff;font:inherit;font-size:14px;cursor:pointer}
+main{padding:18px 16px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 10px rgba(30,22,51,.05)}.stat b{font-family:'Space Grotesk',sans-serif;font-size:26px;display:block}.stat small{font-size:12px;color:var(--soft)}
+.stat.p{background:var(--brand);color:#fff}.stat.p small{color:#EDE9FE}
+h2{font-size:17px;margin:20px 4px 10px;display:flex;justify-content:space-between;align-items:center}
+.card{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(30,22,51,.05);cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.muted{color:var(--soft);font-size:13px;margin-top:4px}
+.chip{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.k0{background:#FEF3C7;color:var(--warn)}.k1{background:#DCFCE7;color:var(--ok)}.k2{background:#EDE9FE;color:var(--brand)}.k3{background:#EEE;color:#555}
+.slot{display:flex;gap:14px}.slot .h{width:56px;flex:none;font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--brand);padding-top:14px}
+.slot .card{flex:1}
+.av{width:44px;height:44px;border-radius:50%;background:#EDE9FE;color:var(--brand);display:grid;place-items:center;font-weight:700;flex:none}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:4px 9px;border-radius:8px;margin:6px 6px 0 0;background:#FCE7F3;color:#9D174D}
+.tag.b{background:#EDE9FE;color:var(--brand)}
+.tl{border-left:3px solid var(--line);margin-left:6px;padding-left:14px}.tl p{font-size:14px;margin-bottom:12px}.tl b{display:block;font-size:12px;color:var(--soft)}
+nav{position:fixed;bottom:0;width:100%;max-width:430px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 0 14px}
+nav button{background:none;border:none;font:inherit;font-size:11px;color:var(--soft);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}nav button.on{color:var(--brand);font-weight:700}nav svg{width:24px;height:24px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px;font:inherit;text-align:left;cursor:pointer}.opt b{display:block;font-size:14px}.opt small{color:var(--soft);font-size:12px}
+.opt.sel{border-color:var(--brand);background:#F5F0FF}
+.days{display:flex;gap:8px;overflow-x:auto}.day{flex:none;width:60px;padding:10px 0;text-align:center;border-radius:14px;background:#fff;border:2px solid var(--line);cursor:pointer;font:inherit}
+.day b{display:block;font-size:20px;font-family:'Space Grotesk',sans-serif}.day small{font-size:11px;color:var(--soft)}.day.sel{background:var(--brand);border-color:var(--brand);color:#fff}.day.sel small{color:#EDE9FE}
+.times{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.time{padding:10px 0;border-radius:10px;border:1.5px solid var(--line);background:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.time.sel{background:var(--brand2);border-color:var(--brand2);color:#fff}.time:disabled{opacity:.35;text-decoration:line-through}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;margin-top:14px}
+.btn.p{background:var(--brand);color:#fff}.btn.w{background:#25D366;color:#fff}.btn.g{background:#fff;color:var(--brand);border:1.5px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:14px}td{padding:10px 2px;border-bottom:1px solid var(--line)}td:last-child{text-align:right;font-weight:600}.tot td{border:none;font-weight:700;font-size:17px}
+input{width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line)}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;width:max-content;max-width:90%}.toast.on{opacity:1}
+.shot .app,.shot nav{max-width:none}
+</style>
+</head>
+<body>
+<div class="app"><div id="view"></div><nav id="nav"></nav><div class="toast" id="toast"></div></div>
+<script>
+if(location.search.includes("shot"))document.documentElement.classList.add("shot");
+const EST=["Pendiente","Confirmada por WhatsApp","En consulta","Atendida"];
+const ICON={cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M16 4a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5-5-5.7"/></svg>',
+plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
+cash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>'};
+const PAC={1:{n:"Sofía Martínez",e:34,tel:"9711-2233",al:["Penicilina"],cond:["Hipertensión controlada"],h:[["14 oct 2026","Control de presión. Se ajusta dosis de losartán."],["02 jul 2026","Chequeo general. Exámenes de laboratorio normales."]]},
+2:{n:"Roberto Aguilar",e:52,tel:"9988-0011",al:[],cond:["Diabetes tipo 2"],h:[["20 sep 2026","Control de glucosa. Se refuerza dieta."]]},
+3:{n:"Valeria Castro",e:8,tel:"3344-5566",al:["Mariscos"],cond:[],h:[["11 ago 2026","Vacunación de refuerzo."]]},
+4:{n:"Miguel Hernández",e:41,tel:"8877-6655",al:[],cond:[],h:[]},5:{n:"Patricia Reyes",e:29,tel:"9512-3434",al:["Ibuprofeno"],cond:[],h:[["30 sep 2026","Consulta por migraña."]]}};
+const seed={citas:[["8:00",1,"Control de presión",3],["9:00",2,"Control de diabetes",2],["10:00",3,"Consulta pediátrica",1],["11:30",4,"Primera consulta",1],["2:00",5,"Seguimiento",0]],svc:"Medicina general",day:1,time:"3:30"};
+let S;try{S=JSON.parse(localStorage.getItem("medicita"))}catch(e){}if(!S)S=seed;
+const save=()=>{try{localStorage.setItem("medicita",JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);const go=h=>location.hash=h;
+function toast(t){$("toast").textContent=t;$("toast").classList.add("on");setTimeout(()=>$("toast").classList.remove("on"),2300)}
+function head(t,s,back){return `<header><div class="top">${back?`<button class="back" onclick="history.back()">← Atrás</button>`:`<div class="logo">Medi<span>Cita</span></div>`}<div class="avatar">DR</div></div><h1>${t}</h1>${s?`<p>${s}</p>`:""}</header>`}
+const ini=n=>n.split(" ").map(x=>x[0]).join("");
+const V={
+agenda(){const c=S.citas;return head("Agenda de hoy","Dra. Andrea López · Jueves 5 de noviembre")+`<main><div class="grid">
+<div class="stat p"><b>${c.length}</b><small>Citas hoy</small></div><div class="stat"><b>${c.filter(x=>x[3]>=1).length}</b><small>Confirmadas</small></div><div class="stat"><b>${c.filter(x=>x[3]==3).length}</b><small>Atendidas</small></div></div>
+<h2>Horario</h2>${c.map((x,i)=>`<div class="slot"><div class="h">${x[0]}</div><div class="card" onclick="go('#paciente/${x[1]}')"><div class="row"><b>${PAC[x[1]].n}</b><span class="chip k${x[3]}">${EST[x[3]]}</span></div><div class="muted">${x[2]}</div></div></div>`).join("")}</main>`},
+paciente(id){const p=PAC[id];if(!p)return V.agenda();const c=S.citas.find(x=>x[1]==id);return head(p.n,p.e+" años · "+p.tel,true)+`<main>
+<div class="card"><b>Alertas médicas</b><div>${p.al.map(a=>`<span class="tag">Alergia: ${a}</span>`).join("")}${p.cond.map(a=>`<span class="tag b">${a}</span>`).join("")}${!p.al.length&&!p.cond.length?`<div class="muted">Sin alergias ni condiciones registradas</div>`:""}</div></div>
+${c&&c[3]<3?`<button class="btn p" onclick="avanzar(${id})">${c[3]<2?"Iniciar consulta":"Terminar consulta"}</button>`:""}
+<h2>Historial de consultas</h2><div class="card"><div class="tl">${c&&c[3]>=2?`<p><b>Hoy</b>${c[2]} — consulta en curso</p>`:""}${p.h.map(h=>`<p><b>${h[0]}</b>${h[1]}</p>`).join("")||`<p class="muted">Primera visita</p>`}</div></div>
+<button class="btn w" onclick="toast('Receta enviada a ${p.n} por WhatsApp')">Enviar receta por WhatsApp</button>
+<button class="btn g" onclick="toast('Recordatorio programado para el próximo control')">Programar próximo control</button></main>`},
+reservar(){const d=["Jue","Vie","Sáb","Lun","Mar"],n=[6,7,8,10,11];const t=["8:00","8:30","9:00","9:30","10:00","11:00","2:00","2:30","3:00","3:30","4:00","4:30"];const busy=["8:00","9:00","10:00","2:00"];
+return head("Reservar cita","Así reservan tus pacientes, desde el celular")+`<main>
+<h2>Servicio</h2><div class="opts">${[["Medicina general","30 min"],["Pediatría","30 min"],["Control prenatal","45 min"],["Exámenes","15 min"]].map(o=>`<button class="opt ${S.svc==o[0]?"sel":""}" onclick="S.svc='${o[0]}';render()"><b>${o[0]}</b><small>${o[1]}</small></button>`).join("")}</div>
+<h2>Día</h2><div class="days">${d.map((x,i)=>`<button class="day ${S.day==i?"sel":""}" onclick="S.day=${i};render()"><small>${x}</small><b>${n[i]}</b><small>Nov</small></button>`).join("")}</div>
+<h2>Hora disponible</h2><div class="times">${t.map(x=>`<button class="time ${S.time==x?"sel":""}" ${busy.includes(x)?"disabled":""} onclick="S.time='${x}';render()">${x}</button>`).join("")}</div>
+<button class="btn p" onclick="reservar('${d[S.day]} ${n[S.day]}')">Confirmar cita</button>
+<div class="muted" style="text-align:center;margin-top:10px">Recibirás un recordatorio por WhatsApp un día antes</div></main>`},
+pacientes(){return head("Pacientes",Object.keys(PAC).length+" expedientes digitales")+`<main><input placeholder="🔍 Buscar por nombre o teléfono">
+<h2>Todos</h2>${Object.entries(PAC).map(([id,p])=>`<div class="card" onclick="go('#paciente/${id}')"><div class="row"><div style="display:flex;gap:12px;align-items:center"><div class="av">${ini(p.n)}</div><div><b>${p.n}</b><div class="muted">${p.e} años · ${p.h.length} consultas</div></div></div>${p.al.length?`<span class="chip" style="background:#FCE7F3;color:#9D174D">Alergia</span>`:""}</div></div>`).join("")}</main>`},
+cobros(){const r=[["Sofía Martínez","Consulta general",500,"Tarjeta"],["Roberto Aguilar","Control + glucometría",650,"Efectivo"],["Valeria Castro","Consulta pediátrica",550,"Transferencia"]];const tot=r.reduce((s,x)=>s+x[2],0);
+return head("Cobros del día","Facturación y cierre de caja")+`<main><div class="grid"><div class="stat p"><b>L ${tot.toLocaleString("es-HN")}</b><small>Cobrado hoy</small></div><div class="stat"><b>${r.length}</b><small>Pagos</small></div><div class="stat"><b>0</b><small>Pendientes</small></div></div>
+<h2>Detalle</h2><div class="card"><table>${r.map(x=>`<tr><td><b>${x[0]}</b><div class="muted" style="margin:0">${x[1]} · ${x[3]}</div></td><td>L ${x[2]}</td></tr>`).join("")}<tr class="tot"><td>Total</td><td>L ${tot.toLocaleString("es-HN")}</td></tr></table></div>
+<button class="btn p" onclick="toast('Cierre de caja enviado a tu correo')">Cerrar caja del día</button></main>`}};
+function avanzar(id){const c=S.citas.find(x=>x[1]==id);c[3]=c[3]<2?2:3;save();toast(c[3]==2?"Consulta iniciada":"Consulta guardada en el expediente");render()}
+function reservar(d){toast("✅ Cita confirmada: "+S.svc+", "+d+" a las "+S.time);save()}
+function render(){const [r,a]=(location.hash.slice(1)||"agenda").split("/");$("view").innerHTML=(V[r]||V.agenda)(a);scrollTo(0,0);
+const t=[["agenda","Agenda","cal"],["pacientes","Pacientes","users"],["reservar","Reservar","plus"],["cobros","Cobros","cash"]];
+$("nav").innerHTML=t.map(x=>`<button class="${x[0]==r?"on":""}" onclick="go('#${x[0]}')">${ICON[x[2]]}${x[1]}</button>`).join("")}
+addEventListener("hashchange",render);render();
+</script>
+</body>
+</html>

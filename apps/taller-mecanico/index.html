@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taller Mecánico — por Santec</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--brand:#1D3F8F;--brand2:#F28C28;--bg:#F3F5F9;--card:#FFFFFF;--ink:#13203A;--soft:#5B6780;--line:#E2E7F0;--ok:#1E8E5A;--warn:#C97A0A;--info:#2F6BD8;--danger:#C2410C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#DCE2EC;color:var(--ink);display:flex;justify-content:center;min-height:100vh}
+.app{width:100%;max-width:430px;min-height:100vh;background:var(--bg);position:relative;padding-bottom:84px}
+header{background:var(--brand);color:#fff;padding:22px 20px 26px;border-radius:0 0 26px 26px}
+header .top{display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;letter-spacing:.5px}
+.logo span{color:var(--brand2)}
+.avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:700}
+header h1{font-size:24px;margin-top:16px;font-family:'Space Grotesk',sans-serif}
+header p{opacity:.8;font-size:14px;margin-top:4px}
+main{padding:18px 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:var(--card);border-radius:18px;padding:16px;box-shadow:0 2px 10px rgba(19,32,58,.06)}
+.stat b{font-size:28px;font-family:'Space Grotesk',sans-serif;display:block}
+.stat small{color:var(--soft);font-size:13px}
+.stat.accent{background:var(--brand2);color:#fff}.stat.accent small{color:#fff;opacity:.9}
+h2{font-size:17px;margin:22px 4px 10px;display:flex;justify-content:space-between;align-items:center}
+h2 a{font-size:13px;color:var(--info);font-weight:600;cursor:pointer}
+.card{background:var(--card);border-radius:18px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(19,32,58,.06);cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.plate{font-family:'Space Grotesk',sans-serif;font-weight:700;background:#FFF4E8;color:#8A4B0B;border:1.5px solid #F2C79A;border-radius:8px;padding:3px 8px;font-size:14px}
+.muted{color:var(--soft);font-size:13px;margin-top:4px}
+.chip{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.s0{background:#EEF2F8;color:#4A5875}.s1{background:#FFF3DC;color:var(--warn)}.s2{background:#E5EEFF;color:var(--info)}.s3{background:#E1F5EA;color:var(--ok)}.s4{background:#ECECEC;color:#666}
+.bar{height:6px;background:var(--line);border-radius:6px;margin-top:12px;overflow:hidden}.bar i{display:block;height:100%;background:var(--brand2);border-radius:6px}
+nav{position:fixed;bottom:0;width:100%;max-width:430px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 0 14px}
+nav button{background:none;border:none;font:inherit;font-size:11px;color:var(--soft);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+nav button.on{color:var(--brand);font-weight:700}
+nav svg{width:24px;height:24px}
+.fab{width:54px;height:54px;border-radius:50%;background:var(--brand2);color:#fff!important;margin-top:-30px;box-shadow:0 6px 16px rgba(242,140,40,.45);justify-content:center}
+label{display:block;font-size:13px;font-weight:600;color:var(--soft);margin:14px 2px 6px}
+input,select,textarea{width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+textarea{min-height:80px;resize:vertical}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.checks label{margin:0;display:flex;gap:8px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px;font-weight:500;color:var(--ink)}
+.checks input{width:auto}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;margin-top:16px}
+.btn.p{background:var(--brand);color:#fff}.btn.o{background:var(--brand2);color:#fff}.btn.w{background:#25D366;color:#fff}.btn.g{background:#fff;color:var(--brand);border:1.5px solid var(--line)}
+.steps{display:flex;gap:6px;margin:14px 0}.steps div{flex:1;text-align:center;font-size:11px;color:var(--soft)}
+.steps div i{display:block;height:6px;border-radius:6px;background:var(--line);margin-bottom:6px}
+.steps div.on i{background:var(--brand2)}.steps div.on{color:var(--ink);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}td{padding:9px 2px;border-bottom:1px solid var(--line)}td:last-child{text-align:right;font-weight:600}
+.total td{border:none;font-size:17px;font-weight:700;padding-top:12px}
+.search{display:flex;gap:8px}.search input{flex:1}
+.tl{border-left:3px solid var(--line);margin-left:6px;padding-left:16px}
+.tl .card{position:relative}.tl .card:before{content:"";position:absolute;left:-24px;top:18px;width:13px;height:13px;border-radius:50%;background:var(--brand2);border:3px solid var(--bg)}
+.back{background:none;border:none;color:#fff;font:inherit;font-size:14px;cursor:pointer;opacity:.9}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;width:max-content;max-width:90%}
+.toast.on{opacity:1}
+.shot .app,.shot nav{max-width:none}
+</style>
+</head>
+<body>
+<div class="app">
+<div id="view"></div>
+<nav id="nav"></nav>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+if(location.search.includes("shot"))document.documentElement.classList.add("shot");
+const ESTADOS=["Recibido","Diagnóstico","En reparación","Listo para entregar","Entregado"];
+const ICON={
+home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>',
+car:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 16h14v-4l-2-5H7l-2 5z"/><circle cx="8" cy="17" r="1.8"/><circle cx="16" cy="17" r="1.8"/></svg>',
+chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>'};
+const seed=[
+{id:1041,placa:"HAB 4521",auto:"Toyota Hilux 2018",cliente:"Carlos Mejía",tel:"9876-5432",km:"148,320",falla:"Ruido en suspensión delantera",estado:2,items:[["Bujes de tijera (2)",1800],["Amortiguadores delanteros",4200],["Mano de obra",1500]]},
+{id:1042,placa:"PCD 1187",auto:"Honda Civic 2015",cliente:"Ana Rodríguez",tel:"9455-1209",km:"96,410",falla:"Cambio de aceite y frenos",estado:3,items:[["Aceite sintético + filtro",1350],["Pastillas de freno",1100],["Mano de obra",600]]},
+{id:1043,placa:"HBT 9034",auto:"Nissan Frontier 2020",cliente:"Transportes López",tel:"3312-7788",km:"61,005",falla:"Luz de motor encendida",estado:1,items:[["Escaneo computarizado",500]]},
+{id:1044,placa:"PDA 5520",auto:"Kia Sportage 2017",cliente:"María Fernández",tel:"8890-4411",km:"112,770",falla:"Aire acondicionado no enfría",estado:0,items:[]}];
+const hist={"HAB 4521":[["12 ago 2026","Cambio de aceite y filtros","142,100 km"],["03 mar 2026","Alineado y balanceo","135,900 km"],["18 oct 2025","Frenos traseros","128,400 km"]]};
+let S;try{S=JSON.parse(localStorage.getItem("mw"))}catch(e){}
+if(!S)S={ordenes:seed,next:1045};
+const save=()=>{try{localStorage.setItem("mw",JSON.stringify(S))}catch(e){}};
+const L=n=>"L "+n.toLocaleString("es-HN");
+const total=o=>o.items.reduce((a,b)=>a+b[1],0);
+const $=id=>document.getElementById(id);
+function toast(t){const el=$("toast");el.textContent=t;el.classList.add("on");setTimeout(()=>el.classList.remove("on"),2200)}
+function go(h){location.hash=h}
+function head(t,sub,back){return `<header><div class="top">${back?`<button class="back" onclick="history.back()">← Atrás</button>`:`<div class="logo">Taller <span>Mecánico</span></div>`}<div class="avatar">TM</div></div><h1>${t}</h1>${sub?`<p>${sub}</p>`:""}</header>`}
+function card(o){const p=[15,35,65,100,100][o.estado];return `<div class="card" onclick="go('#orden/${o.id}')"><div class="row"><span class="plate">${o.placa}</span><span class="chip s${o.estado}">${ESTADOS[o.estado]}</span></div><div style="margin-top:10px;font-weight:600">${o.auto}</div><div class="muted">${o.cliente} · ${o.falla}</div><div class="bar"><i style="width:${p}%"></i></div></div>`}
+const V={
+inicio(){const a=S.ordenes.filter(o=>o.estado<4);return head("Buenos días, Taller Mejía","Jueves 5 de noviembre")+`<main><div class="grid">
+<div class="stat accent"><b>${a.length}</b><small>Vehículos en taller</small></div>
+<div class="stat"><b>${S.ordenes.filter(o=>o.estado==3).length}</b><small>Listos para entregar</small></div>
+<div class="stat"><b>${S.ordenes.filter(o=>o.estado==1).length}</b><small>En diagnóstico</small></div>
+<div class="stat"><b>${L(S.ordenes.filter(o=>o.estado>=3).reduce((s,o)=>s+total(o),0))}</b><small>Por cobrar hoy</small></div></div>
+<h2>En el taller ahora <a onclick="go('#ordenes')">Ver todo</a></h2>${a.slice(0,3).map(card).join("")}</main>`},
+ordenes(){return head("Órdenes de trabajo",S.ordenes.length+" órdenes registradas")+`<main>${ESTADOS.slice(0,4).map((e,i)=>{const l=S.ordenes.filter(o=>o.estado==i);return l.length?`<h2>${e} <span class="chip s${i}">${l.length}</span></h2>`+l.map(card).join(""):""}).join("")}</main>`},
+nueva(){return head("Recibir vehículo","Orden #"+S.next)+`<main>
+<label>Placa</label><input id="f_placa" placeholder="Ej. HAB 1234">
+<label>Vehículo</label><input id="f_auto" placeholder="Marca, modelo y año">
+<label>Cliente</label><input id="f_cli" placeholder="Nombre del cliente">
+<label>WhatsApp del cliente</label><input id="f_tel" placeholder="9999-9999">
+<label>Kilometraje</label><input id="f_km" placeholder="Ej. 85,000">
+<label>¿Qué falla reporta el cliente?</label><textarea id="f_falla" placeholder="Describe el problema"></textarea>
+<label>Revisión al recibir</label><div class="checks">
+<label><input type="checkbox">Rayones / golpes</label><label><input type="checkbox" checked>Llanta de repuesto</label>
+<label><input type="checkbox" checked>Gata y herramientas</label><label><input type="checkbox">Objetos de valor</label></div>
+<label>Nivel de combustible</label><select><option>Reserva</option><option>1/4</option><option selected>1/2</option><option>3/4</option><option>Lleno</option></select>
+<button class="btn o" onclick="crear()">Crear orden y avisar al cliente</button></main>`},
+orden(id){const o=S.ordenes.find(x=>x.id==id);if(!o)return V.inicio();return head(o.auto,"Orden #"+o.id+" · "+o.placa,true)+`<main>
+<div class="steps">${ESTADOS.slice(0,4).map((e,i)=>`<div class="${i<=o.estado?"on":""}"><i></i>${e}</div>`).join("")}</div>
+<div class="card"><div class="muted" style="margin:0">Cliente</div><div style="font-weight:600;margin-top:2px">${o.cliente} · ${o.tel}</div>
+<div class="muted">Kilometraje</div><div style="font-weight:600;margin-top:2px">${o.km} km</div>
+<div class="muted">Falla reportada</div><div style="font-weight:600;margin-top:2px">${o.falla}</div></div>
+<h2>Cotización</h2><div class="card">${o.items.length?`<table>${o.items.map(i=>`<tr><td>${i[0]}</td><td>${L(i[1])}</td></tr>`).join("")}<tr class="total"><td>Total</td><td>${L(total(o))}</td></tr></table>`:`<div class="muted" style="margin:0">Aún sin cotización. Agrega repuestos y mano de obra.</div>`}</div>
+${o.estado<4?`<button class="btn p" onclick="avanzar(${o.id})">Pasar a: ${ESTADOS[o.estado+1]}</button>`:""}
+<button class="btn w" onclick="toast('Mensaje enviado a ${o.cliente} por WhatsApp')">Avisar al cliente por WhatsApp</button>
+<button class="btn g" onclick="go('#historial/${encodeURIComponent(o.placa)}')">Ver historial del vehículo</button></main>`},
+historial(q){q=q?decodeURIComponent(q):"HAB 4521";const h=hist[q]||[];const o=S.ordenes.filter(x=>x.placa==q);return head("Historial del vehículo","Todo lo que se le ha hecho, por placa")+`<main>
+<div class="search"><input id="q" value="${q}"><button class="btn p" style="width:auto;margin:0;padding:0 18px" onclick="go('#historial/'+encodeURIComponent($('q').value.toUpperCase()))">Buscar</button></div>
+<h2>${q}</h2><div class="tl">${o.map(x=>`<div class="card" onclick="go('#orden/${x.id}')"><div class="row"><b>Hoy</b><span class="chip s${x.estado}">${ESTADOS[x.estado]}</span></div><div class="muted">${x.falla}</div></div>`).join("")}
+${h.map(x=>`<div class="card"><b>${x[0]}</b><div class="muted">${x[1]} · ${x[2]}</div></div>`).join("")}${!o.length&&!h.length?`<div class="muted">No hay registros para esta placa.</div>`:""}</div></main>`},
+reportes(){const t=S.ordenes.reduce((s,o)=>s+total(o),0);const d=[["Lun",62],["Mar",80],["Mié",45],["Jue",95],["Vie",70],["Sáb",88]];return head("Reportes","Semana del 2 al 7 de noviembre")+`<main>
+<div class="grid"><div class="stat accent"><b>${S.ordenes.length+23}</b><small>Vehículos atendidos</small></div><div class="stat"><b>${L(t+48250)}</b><small>Ingresos de la semana</small></div></div>
+<h2>Vehículos por día</h2><div class="card"><div style="display:flex;align-items:flex-end;gap:10px;height:140px">${d.map(x=>`<div style="flex:1;text-align:center"><div style="height:${x[1]}px;background:var(--brand);border-radius:8px 8px 4px 4px"></div><small class="muted">${x[0]}</small></div>`).join("")}</div></div>
+<h2>Servicios más pedidos</h2><div class="card"><table><tr><td>Cambio de aceite</td><td>14</td></tr><tr><td>Frenos</td><td>8</td></tr><tr><td>Suspensión</td><td>5</td></tr><tr><td>Diagnóstico computarizado</td><td>6</td></tr></table></div></main>`}};
+function crear(){const v=k=>$(k).value.trim();if(!v("f_placa")||!v("f_auto")){toast("Escribe al menos la placa y el vehículo");return}
+S.ordenes.unshift({id:S.next++,placa:v("f_placa").toUpperCase(),auto:v("f_auto"),cliente:v("f_cli")||"Cliente",tel:v("f_tel")||"—",km:v("f_km")||"—",falla:v("f_falla")||"Revisión general",estado:0,items:[]});save();toast("Orden creada. El cliente recibió su comprobante por WhatsApp");go("#ordenes")}
+function avanzar(id){const o=S.ordenes.find(x=>x.id==id);o.estado++;save();toast(o.estado==3?"¡Listo! Se avisó al cliente que puede recoger su vehículo":"Estado actualizado: "+ESTADOS[o.estado]);render()}
+function render(){const [r,arg]=(location.hash.slice(1)||"inicio").split("/");const f=V[r]||V.inicio;$("view").innerHTML=f(arg);window.scrollTo(0,0);
+const tabs=[["inicio","Inicio","home"],["ordenes","Órdenes","list"],["nueva","Recibir","plus"],["historial","Historial","car"],["reportes","Reportes","chart"]];
+$("nav").innerHTML=tabs.map(t=>`<button class="${t[0]==r?"on":""} ${t[0]=="nueva"?"fab":""}" onclick="go('#${t[0]}')">${ICON[t[2]]}${t[0]=="nueva"?"":t[1]}</button>`).join("")}
+addEventListener("hashchange",render);render();
+</script>
+</body>
+</html>
