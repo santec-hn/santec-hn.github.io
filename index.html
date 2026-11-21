@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Santec — Innovación conectada</title>
 <meta name="description" content="Santec desarrolla apps para negocios hondureños: talleres, clínicas, tiendas, salones y barberías, carwash, bares y restaurantes, equipos de emergencia y atención por WhatsApp con IA.">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#13232B">
 <link rel="canonical" href="https://santec-hn.github.io/">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
 <link rel="icon" type="image/png" sizes="512x512" href="assets/brand/icon-512.png">
@@ -24,12 +24,12 @@
 <meta property="og:image:alt" content="Santec: apps para negocios hondureños">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Organization","name":"Santec","legalName":"Inversiones Santec Sociedad de Responsabilidad Limitada","taxID":"08019026323820","url":"https://santec-hn.github.io/","logo":"https://santec-hn.github.io/assets/brand/icon-512.png","email":"allxfllrs@gmail.com","telephone":"+504 9745-8718","address":{"@type":"PostalAddress","streetAddress":"Col. Simón Bolívar, calle principal, casa #9814","addressLocality":"Tegucigalpa","addressRegion":"Francisco Morazán","postalCode":"11101","addressCountry":"HN"}}
+{"@context":"https://schema.org","@type":"Organization","name":"Santec","legalName":"Inversiones Santec Sociedad de Responsabilidad Limitada","taxID":"08019026323820","url":"https://santec-hn.github.io/","logo":"https://santec-hn.github.io/assets/brand/icon-512.png","email":"allxfllrs@gmail.com","telephone":"+504 9745-8718","founder":{"@type":"Person","name":"Nelson Flores","jobTitle":"Fundador y CEO","image":"https://santec-hn.github.io/assets/img/nelson-flores.webp"},"address":{"@type":"PostalAddress","streetAddress":"Col. Simón Bolívar, calle principal, casa #9814","addressLocality":"Tegucigalpa","addressRegion":"Francisco Morazán","postalCode":"11101","addressCountry":"HN"}}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=11">
+<link rel="stylesheet" href="styles.css?v=24">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -81,19 +81,54 @@
 
 <main id="top">
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero tint">
     <div class="hero-media" aria-hidden="true">
-      <div class="screens">
-        <img src="assets/img/mw-inicio.webp" alt="" decoding="async">
-        <img src="assets/img/st-chat.webp" alt="" decoding="async">
-        <img src="assets/img/mc-agenda.webp" alt="" decoding="async">
-        <img src="assets/img/cf-vender.webp" alt="" decoding="async">
-        <img src="assets/img/r3-inicio.webp" alt="" decoding="async">
-        <img src="assets/img/mw-ordenes.webp" alt="" decoding="async">
-        <img src="assets/img/st-pedidos.webp" alt="" decoding="async">
-        <img src="assets/img/mc-reservar.webp" alt="" decoding="async">
-        <img src="assets/img/cf-reportes.webp" alt="" decoding="async">
-        <img src="assets/img/r3-unidades.webp" alt="" decoding="async">
+      <!-- Logo de Santec animado: pistas de circuito que salen del logo, con señales que corren por ellas.
+           Coordenadas en un lienzo de 1000×700 con el logo centrado en (500,350); el CSS lo escala igual que al logo. -->
+      <div class="logo-stage">
+        <svg class="traces" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g class="tr-shift">
+            <g class="tr-base">
+              <path pathLength="1" d="M612 300H700L740 260H1120"/>
+              <path pathLength="1" d="M612 352H760L800 392H1120"/>
+              <path pathLength="1" d="M600 432H680L730 482H900L940 522H1120"/>
+              <path pathLength="1" d="M388 290H300L260 250H-120"/>
+              <path pathLength="1" d="M392 362H220L180 402H-120"/>
+              <path pathLength="1" d="M402 442H320L270 492H60"/>
+              <path pathLength="1" d="M470 205V120L430 80V-60"/>
+              <path pathLength="1" d="M540 208V150L580 110H700L740 70V-60"/>
+              <path pathLength="1" d="M460 495V580L420 620V780"/>
+              <path pathLength="1" d="M545 492V560L590 605H820L860 645V780"/>
+            </g>
+            <g class="tr-pulse" filter="url(#glow)">
+              <path pathLength="1" d="M612 300H700L740 260H1120"/>
+              <path pathLength="1" d="M612 352H760L800 392H1120"/>
+              <path pathLength="1" d="M600 432H680L730 482H900L940 522H1120"/>
+              <path pathLength="1" d="M388 290H300L260 250H-120"/>
+              <path pathLength="1" d="M392 362H220L180 402H-120"/>
+              <path pathLength="1" d="M402 442H320L270 492H60"/>
+              <path pathLength="1" d="M470 205V120L430 80V-60"/>
+              <path pathLength="1" d="M540 208V150L580 110H700L740 70V-60"/>
+              <path pathLength="1" d="M460 495V580L420 620V780"/>
+              <path pathLength="1" d="M545 492V560L590 605H820L860 645V780"/>
+            </g>
+            <g class="tr-pads">
+              <circle cx="740" cy="260" r="5"/><circle cx="800" cy="392" r="5"/><circle cx="940" cy="522" r="5"/>
+              <circle cx="260" cy="250" r="5"/><circle cx="180" cy="402" r="5"/><circle cx="60" cy="492" r="6"/>
+              <circle cx="430" cy="80" r="5"/><circle cx="740" cy="70" r="5"/><circle cx="420" cy="620" r="5"/><circle cx="860" cy="645" r="5"/>
+            </g>
+          </g>
+        </svg>
+        <div class="logo-wrap">
+          <img src="assets/brand/santec-mark.png" alt="" class="logo-mark" decoding="async">
+          <span class="logo-shine"></span>
+        </div>
       </div>
     </div>
     <div class="hero-copy" id="contenido">
@@ -108,7 +143,7 @@
   </section>
 
   <!-- DECLARACIÓN -->
-  <section class="statement light" id="nosotros">
+  <section class="statement tint" id="nosotros">
     <div class="wrap">
       <h2 class="display split">Innovación conectada.</h2>
       <div class="statement-grid">
@@ -128,7 +163,7 @@
           <p>La tecnología no debería ser solo para las grandes empresas.</p>
           <p>En Santec creamos herramientas que cualquier negocio puede usar desde el primer día: sin cuadernos, sin hojas sueltas, sin complicaciones. Tú te enfocas en tus clientes; la app se encarga del orden.</p>
           <dl class="facts">
-            <div><dt>8</dt><dd>apps listas para usar</dd></div>
+            <div><dt>1 app</dt><dd>una solución para cada negocio</dd></div>
             <div><dt>24/7</dt><dd>atención con IA</dd></div>
             <div><dt>1 día</dt><dd>para empezar a usarla</dd></div>
           </dl>
@@ -139,7 +174,7 @@
   </section>
 
   <!-- BANDA DE RUBROS -->
-  <div class="logos light" aria-label="Negocios con los que trabajamos">
+  <div class="logos" aria-label="Negocios con los que trabajamos">
     <div class="logos-track">
       <span><svg><use href="#i-wrench"/></svg>Talleres</span>
       <span><svg><use href="#i-pulse"/></svg>Clínicas</span>
@@ -167,7 +202,7 @@
   </div>
 
   <!-- PROCESO -->
-  <section class="process" id="proceso">
+  <section class="process tint" id="proceso">
     <div class="wrap process-grid">
       <aside class="timeline" aria-hidden="true">
         <div class="timeline-line"><div class="timeline-fill" id="tlFill"></div></div>
@@ -187,7 +222,6 @@
           <p class="step-text">Antes de hablar de tecnología, hablamos de ti: cómo vendes, cómo atiendes y qué te quita tiempo. De ahí sale lo que tu app necesita, y nada más.</p>
         </article>
         <article class="step" data-step="1">
-          <figure class="step-media"><img src="assets/brand/santec-plano.webp" alt="Logo de Santec en estilo plano técnico" loading="lazy"></figure>
           <p class="step-kicker">02 — Diseñar</p>
           <h2 class="h2">La adaptamos a tu medida</h2>
           <p class="step-text">Cargamos tus productos, servicios, precios y horarios. Tu app llega lista para usarse, con tu nombre y tu forma de trabajar.</p>
@@ -218,11 +252,11 @@
   </section>
 
   <!-- APPS -->
-  <section class="apps light" id="apps">
+  <section class="apps tint" id="apps">
     <div class="wrap apps-grid">
       <div class="apps-head">
         <h2 class="h2-lg split">Una app para cada negocio.</h2>
-        <p class="apps-sub fade">Ocho soluciones listas para probar desde tu celular. Elige la tuya o pídenos una a la medida.</p>
+        <p class="apps-sub fade">Soluciones listas para probar desde tu celular. Elige la tuya o pídenos una a la medida.</p>
       </div>
       <div class="cards" id="cards"></div>
     </div>
@@ -243,6 +277,22 @@
     </div>
   </section>
 
+  <!-- FUNDADOR -->
+  <section class="founder tint" aria-labelledby="founderName">
+    <div class="wrap founder-grid">
+      <figure class="founder-photo fade">
+        <img src="assets/img/nelson-flores.webp" alt="Nelson Flores, fundador y C.E.O. de Santec" width="960" height="960" loading="lazy" decoding="async">
+      </figure>
+      <div class="founder-copy">
+        <p class="founder-kicker fade">Fundador y C.E.O.</p>
+        <h2 class="h2 split" id="founderName">Nelson Flores</h2>
+        <blockquote class="fade">
+          <p>“Creé Santec porque un negocio pequeño merece la misma tecnología que una gran empresa.”</p>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
   <!-- TARJETA MARCA -->
   <section class="wrap">
     <a class="feature" href="https://wa.me/50497458718?text=Hola%20Santec%2C%20quiero%20una%20demostraci%C3%B3n" target="_blank" rel="noopener">
@@ -255,7 +305,7 @@
   </section>
 
   <!-- CONTACTO -->
-  <section class="contact" id="contacto">
+  <section class="contact tint" id="contacto">
     <div class="wrap contact-grid">
       <h2 class="display split">¿Tienes un negocio en mente?</h2>
       <div class="contact-side fade">
@@ -296,7 +346,8 @@
   <video controls playsinline></video>
 </dialog>
 
-<script src="script.js?v=6"></script>
+<script src="apps-data.js?v=1"></script>
+<script src="script.js?v=8"></script>
 <script src="chat.js?v=2" defer></script>
 </body>
 </html>

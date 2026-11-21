@@ -69,12 +69,6 @@ h1,.display{font-weight:600;font-size:clamp(52px,9.4vw,120px);line-height:.9;let
   clip-path:inset(100% 0 0 0);transition:clip-path 1.4s var(--ease) .1s}
 .loaded .hero-media{clip-path:inset(0 0 0 0)}
 .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.35) 55%,rgba(0,0,0,.15))}
-.screens{filter:brightness(.62) saturate(.9)}
-.screens{position:absolute;left:50%;top:50%;width:1500px;display:grid;grid-template-columns:repeat(5,1fr);gap:28px;
-  transform:translate(-42%,-46%) rotateX(52deg) rotateZ(-32deg);transform-style:preserve-3d}
-.screens img{width:100%;border-radius:18px;box-shadow:0 30px 60px rgba(0,0,0,.45);animation:drift 16s ease-in-out infinite alternate}
-.screens img:nth-child(even){animation-delay:-8s}
-@keyframes drift{to{transform:translateY(-60px)}}
 .hero-copy{position:relative;z-index:2;padding-top:clamp(200px,28vh,260px);max-width:720px}
 .hero-copy h1{text-shadow:0 2px 30px rgba(0,0,0,.25)}
 .hero-lead{margin-top:36px;max-width:360px;font-size:18px;line-height:1.45;color:var(--white)}
@@ -277,7 +271,6 @@ dialog video{width:100%;max-height:86vh;background:#000}
   .hero-media{left:var(--pad);top:90px;bottom:auto;height:46svh}
   .hero-copy{padding-top:calc(90px + 36svh)}
   .hero-lead{margin-top:24px}
-  .screens{width:1100px}
   .values{border-radius:40px 40px 0 0;margin-top:-40px;padding:110px var(--pad)}
   .apps{padding-bottom:calc(90px + 40px)}
   .card-actions{gap:18px}
@@ -417,7 +410,6 @@ section[id],#contenido{scroll-margin-top:84px}
 .hero-media{-webkit-mask-image:linear-gradient(180deg,#000 62%,transparent);mask-image:linear-gradient(180deg,#000 62%,transparent)}
 .hero-media::before{content:"";position:absolute;inset:-20%;z-index:1;pointer-events:none;
   background:radial-gradient(45% 40% at 70% 30%,rgba(124,214,74,.14),transparent 70%)}
-.screens{translate:var(--px,0px) var(--py,0px);transition:translate 1.2s var(--ease-out)}
 
 /* Cifras de la declaración: aparecen escalonadas */
 .facts>div{opacity:0;transform:translateY(16px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out)}
@@ -457,7 +449,7 @@ dialog[open]::backdrop{animation:fadein .45s var(--ease-out)}
 }
 @media (prefers-reduced-motion:reduce){
   .facts>div{opacity:1;transform:none}
-  .screens{translate:none}
+  .logo-stage{translate:none}
   .card{transform:none!important;filter:none!important}
 }
 /* Portada en laptops y pantallas bajas: los botones quedan a la vista sin hacer scroll */
@@ -505,3 +497,245 @@ dialog[open]::backdrop{animation:fadein .45s var(--ease-out)}
 @media (min-width:992px){
   .card{height:clamp(400px,calc(100vh - 186px),520px)}
 }
+
+/* ---------- Fundador ---------- */
+.founder{padding:clamp(80px,10vw,140px) 0 clamp(20px,3vw,40px)}
+.founder-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(36px,6vw,96px);align-items:center}
+.founder-photo{position:relative;border-radius:32px;overflow:hidden;aspect-ratio:1;background:var(--card);max-width:520px}
+.founder-photo img{width:100%;height:100%;object-fit:cover}
+.founder-photo::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.founder-kicker{font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.founder blockquote{margin:28px 0 0;max-width:560px}
+.founder blockquote p{font-size:clamp(19px,1.7vw,23px);line-height:1.45;color:#e2e2e2}
+@media (max-width:860px){
+  .founder-grid{grid-template-columns:minmax(0,1fr)}
+  .founder-photo{max-width:420px;width:100%}
+}
+
+/* ---------- Portada: logo de Santec animado ----------
+   Lienzo de 1000×700 escalado a "cubrir" el recuadro (igual que el SVG con slice): --k = px por unidad.
+   --ox mueve logo y pistas a la derecha para dejar libre el título. */
+.hero-media{container-type:size;background:radial-gradient(60% 70% at 62% 50%,#121a14,#0B0B0D 70%)}
+.hero-media::after{background:linear-gradient(90deg,rgba(0,0,0,.82),rgba(0,0,0,.35) 40%,transparent 62%)}
+.logo-stage{position:absolute;inset:0;--ox:120;--k:max(calc(100cqw / 1000),calc(100cqh / 700));
+  translate:var(--px,0px) var(--py,0px);transition:translate 1.2s var(--ease-out)}
+.traces{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.tr-shift{transform:translateX(calc(var(--ox) * 1px))}
+.tr-base path{fill:none;stroke:rgba(255,255,255,.16);stroke-width:1.6;stroke-dasharray:1;stroke-dashoffset:0}
+.tr-pulse path{fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:.07 3;stroke-dashoffset:.07}
+.tr-pulse path:nth-child(3n+2){stroke:#38BDF8}
+.tr-pads circle{fill:#0B0B0D;stroke:rgba(255,255,255,.35);stroke-width:1.6}
+
+/* El logo: halo oscuro detrás (tapa el inicio de las pistas), brillo verde que respira y un destello que lo recorre */
+.logo-wrap{position:absolute;top:50%;left:calc(50% + var(--ox) * var(--k));height:calc(300 * var(--k));aspect-ratio:265/341;
+  translate:-50% -50%}
+.logo-wrap::before{content:"";position:absolute;inset:-28% -40%;border-radius:50%;
+  background:radial-gradient(closest-side,#0B0B0D 62%,rgba(11,11,13,.6) 80%,transparent)}
+.logo-mark{position:relative;width:100%;height:100%;filter:drop-shadow(0 0 14px rgba(124,214,74,.35))}
+.logo-shine{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 42%,rgba(124,214,74,.95) 50%,rgba(56,189,248,.8) 54%,transparent 62%) 0 0/300% 100% no-repeat;
+  -webkit-mask:url(assets/brand/santec-mark.png) center/contain no-repeat;mask:url(assets/brand/santec-mark.png) center/contain no-repeat}
+
+@media (max-width:600px){.logo-stage{--ox:0}}
+
+@media (prefers-reduced-motion:no-preference){
+  /* Entrada: el logo aparece, luego se dibujan las pistas (escalonadas) y empiezan las señales */
+  .logo-wrap{opacity:0;scale:.9;transition:opacity 1.2s var(--ease-out) .5s,scale 1.6s var(--ease-out) .5s}
+  .loaded .logo-wrap{opacity:1;scale:1}
+  .tr-base path{stroke-dashoffset:1}
+  .loaded .tr-base path{animation:trazar 1.6s var(--ease-out) calc(.8s + var(--d) * .09s) forwards}
+  .tr-pads circle{opacity:0}
+  .loaded .tr-pads circle{animation:aparecer .6s ease-out calc(1.9s + var(--d) * .08s) forwards}
+  .loaded .tr-pulse path{animation:senal var(--t) linear calc(2.2s + var(--d) * .27s) infinite}
+  .loaded .logo-mark{animation:respirar 4s ease-in-out 1.6s infinite}
+  .loaded .logo-shine{animation:destello 6s var(--ease) 1.4s infinite}
+}
+/* orden de salida (--d) y duración de cada señal (--t), para que no vayan al mismo ritmo */
+:is(.tr-base,.tr-pulse) path:nth-child(1),.tr-pads circle:nth-child(1){--d:0;--t:4.2s}
+:is(.tr-base,.tr-pulse) path:nth-child(2),.tr-pads circle:nth-child(2){--d:3;--t:5s}
+:is(.tr-base,.tr-pulse) path:nth-child(3),.tr-pads circle:nth-child(3){--d:6;--t:4.4s}
+:is(.tr-base,.tr-pulse) path:nth-child(4),.tr-pads circle:nth-child(4){--d:1;--t:5.4s}
+:is(.tr-base,.tr-pulse) path:nth-child(5),.tr-pads circle:nth-child(5){--d:4;--t:4.6s}
+:is(.tr-base,.tr-pulse) path:nth-child(6),.tr-pads circle:nth-child(6){--d:7;--t:4.8s}
+:is(.tr-base,.tr-pulse) path:nth-child(7),.tr-pads circle:nth-child(7){--d:2;--t:3.6s}
+:is(.tr-base,.tr-pulse) path:nth-child(8),.tr-pads circle:nth-child(8){--d:5;--t:4.2s}
+:is(.tr-base,.tr-pulse) path:nth-child(9),.tr-pads circle:nth-child(9){--d:8;--t:3.8s}
+:is(.tr-base,.tr-pulse) path:nth-child(10),.tr-pads circle:nth-child(10){--d:9;--t:5.2s}
+
+@keyframes trazar{to{stroke-dashoffset:0}}
+@keyframes aparecer{to{opacity:1}}
+/* la señal sale del logo, recorre la pista y espera antes de volver a salir */
+@keyframes senal{0%{stroke-dashoffset:.07}55%{stroke-dashoffset:-1}100%{stroke-dashoffset:-1}}
+@keyframes respirar{50%{filter:drop-shadow(0 0 26px rgba(124,214,74,.6)) drop-shadow(0 0 4px rgba(56,189,248,.5))}}
+@keyframes destello{0%{background-position:100% 0}45%,100%{background-position:0 0}}
+
+/* ---------- Color de marca: menos negro al final de la página ---------- */
+:root{--accent-ink:#2E7D16;--blue:#38BDF8}   /* verde oscuro para texto sobre fondo claro (contraste AA) */
+
+/* Botón principal en verde Santec */
+.btn-pill{background:var(--accent);color:var(--black)}
+.btn-pill:hover{background:var(--white);box-shadow:0 14px 40px -10px rgba(255,255,255,.35)}
+
+/* Tarjeta "Pide una demostración gratis" con los colores del logo */
+.feature{background:linear-gradient(120deg,var(--accent),#4FC9A0 55%,var(--blue));border:0;border-radius:clamp(28px,4vw,48px);color:var(--black)}
+.feature .btn-circle .circle{background:rgba(0,0,0,.12)}
+.feature:hover .circle{background:var(--black);color:var(--white)}
+.feature-media img{box-shadow:0 40px 80px rgba(0,0,0,.35)}
+
+/* ---------- Proceso y Contacto: ni negro ni blanco, un tono profundo con los colores del logo ---------- */
+:root{--deep:#13232B}
+.process.tint{background:
+  radial-gradient(55% 45% at 12% 28%,rgba(124,214,74,.18),transparent 70%),
+  radial-gradient(50% 45% at 92% 78%,rgba(56,189,248,.18),transparent 70%),var(--deep)}
+.process.tint .timeline-line{background:rgba(255,255,255,.12)}
+.process.tint .tl-num{background:#33474F}
+.process.tint .timeline li.done .tl-num{background:var(--accent)}
+.process.tint .timeline li.on .tl-num{background:var(--deep)}
+.process.tint .step-media{background:#1A2E37;border-radius:28px}
+.process.tint .step-text{color:#B7C2C6}
+
+.contact.tint{margin-top:clamp(60px,8vw,110px);border-radius:80px 80px 0 0;background:
+  radial-gradient(65% 60% at 0% 0%,rgba(124,214,74,.24),transparent 62%),
+  radial-gradient(60% 60% at 100% 100%,rgba(56,189,248,.24),transparent 62%),var(--deep)}
+.contact.tint .contact-side p{color:#B7C2C6}
+.contact.tint .cta-box{border-color:rgba(255,255,255,.28);border-radius:24px}
+.contact.tint .cta-box:hover{background:rgba(124,214,74,.08)}
+.contact.tint .cta-box span small,.contact.tint .chat-link,.contact.tint .privacy-hint{color:#A4B0B5}
+.contact.tint .privacy-hint a{color:#C9D2D5}
+@media (max-width:600px){.contact.tint{border-radius:40px 40px 0 0}}
+
+/* =====================================================================
+   Tema azul petróleo en toda la página (el pie de página se queda negro)
+   ===================================================================== */
+:root{--card:#182A32;--line:#2B4049;--muted:#A4B0B5;--soft:#C9D2D5}
+body{background:var(--deep)}
+.tint{color:var(--white);background:
+  radial-gradient(55% 45% at 12% 28%,rgba(124,214,74,.16),transparent 70%),
+  radial-gradient(50% 45% at 92% 78%,rgba(56,189,248,.16),transparent 70%),var(--deep)}
+/* alterna la posición de los resplandores para que no se repitan iguales */
+.statement.tint,.apps.tint{background:
+  radial-gradient(50% 45% at 88% 18%,rgba(56,189,248,.15),transparent 70%),
+  radial-gradient(55% 45% at 8% 85%,rgba(124,214,74,.14),transparent 70%),var(--deep)}
+
+/* Barra superior y menú móvil */
+.nav::before{background:rgba(19,35,43,.84)}
+@media (max-width:991px){.nav-links{background:var(--deep)}}
+
+/* Portada */
+.hero.tint{background:radial-gradient(45% 50% at 0% 20%,rgba(124,214,74,.1),transparent 70%),var(--deep)}
+.hero-media{background:radial-gradient(60% 70% at 62% 50%,#1C3540,#13232B 72%)}
+.hero-media::after{background:linear-gradient(90deg,rgba(19,35,43,.88),rgba(19,35,43,.35) 40%,transparent 62%)}
+.logo-wrap::before{background:radial-gradient(closest-side,#13232B 62%,rgba(19,35,43,.6) 80%,transparent)}
+.tr-pads circle{fill:var(--deep)}
+
+/* Nosotros */
+.statement-body{color:var(--soft)}
+.facts{border-top-color:rgba(255,255,255,.12)}
+.facts dt{color:var(--white)}
+.facts dd{color:var(--muted)}
+.reel-list{border-top-color:rgba(255,255,255,.12)}
+.reel-list li{border-bottom-color:rgba(255,255,255,.12)}
+.reel-item{color:var(--muted)}
+.reel-item:hover .t,.reel-item.on .t,.reel-item.on .n{color:var(--white)}
+
+/* Banda de rubros */
+.logos{border-color:rgba(255,255,255,.08)}
+.logos-track span{color:var(--soft)}
+.logos-track svg{color:var(--accent)}
+
+/* Apps */
+.apps-sub{color:var(--muted)}
+.card-shot{background:#1F3640}
+.card{box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+
+/* Valores: la foto de fondo se funde con el azul petróleo */
+.values{background:var(--deep)}
+.values-media::after{background:radial-gradient(70% 60% at 50% 50%,rgba(19,35,43,.55),rgba(19,35,43,.88)),linear-gradient(180deg,transparent 60%,var(--deep))}
+
+/* Fundador */
+.founder.tint .founder-photo{box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+
+/* Pie de página: se queda negro */
+.footer{background:var(--black);color:var(--white)}
+
+/* ---------- Apps: 4.ª tarjeta "¿Tu negocio es otro?" ---------- */
+.card-more{background:linear-gradient(140deg,#1C3440,#182A32 60%)}
+.more-list{list-style:none;margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.more-list li{display:block}
+.more-list li::before{display:none}
+.more-list a{width:100%;height:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.07);color:var(--white);font-size:14px;line-height:1.15;transition:background .25s,border-color .25s}
+.more-list a:hover{background:rgba(124,214,74,.1);border-color:rgba(124,214,74,.4)}
+.more-list small{display:block;font-size:11.5px;color:var(--muted)}
+.more-list .new-tag{margin-left:auto}
+.more-ico{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;background:rgba(124,214,74,.14);color:var(--accent);font-size:16px}
+.more-shots{position:relative}
+.more-shots img{position:absolute;left:50%;top:56px;width:50%;border-radius:16px 16px 0 0;box-shadow:0 24px 50px rgba(0,0,0,.5);transition:transform .9s var(--ease-out)}
+.more-shots img:nth-child(1){top:84px;transform:translateX(-98%) rotate(-7deg) scale(.86);z-index:1;opacity:.85}
+.more-shots img:nth-child(2){transform:translateX(-50%);z-index:2}
+.more-shots img:nth-child(3){top:84px;transform:translateX(-2%) rotate(7deg) scale(.86);z-index:1;opacity:.85}
+.card-more:hover .more-shots img:nth-child(2){transform:translate(-50%,-10px)}
+@media (max-width:991px){.more-shots img{width:34%;top:36px}.more-shots img:nth-child(1),.more-shots img:nth-child(3){top:56px}}
+@media (max-width:420px){.more-list{grid-template-columns:1fr}}
+@media (min-width:992px) and (max-height:820px){.more-list{margin-top:10px;gap:6px}.more-list a{padding:6px 9px;font-size:13px}.more-ico{width:26px;height:26px}}
+
+/* Menos recorrido de scroll entre tarjetas (antes 34vh): la sección se siente más corta */
+@media (min-width:992px){.cards{gap:14vh}}
+
+/* ---------- Catálogo de apps (aplicaciones.html) ---------- */
+.catalog-hero{padding:clamp(140px,16vw,200px) 0 clamp(30px,4vw,50px)}
+.catalog-hero h1{margin-top:22px}
+.back-link{font-size:14px;color:var(--muted)}
+.back-link:hover{color:var(--white)}
+.catalog-lead{margin-top:22px;max-width:560px;font-size:clamp(17px,1.5vw,20px);color:var(--soft)}
+.catalog{padding:clamp(20px,3vw,40px) 0 clamp(80px,10vw,120px)}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:clamp(18px,2vw,28px)}
+.app-tile{display:flex;flex-direction:column;border-radius:28px;overflow:hidden;background:var(--card);
+  border:1px solid rgba(255,255,255,.06);scroll-margin-top:110px;transition:transform .5s var(--ease-out),border-color .4s,box-shadow .4s}
+.app-tile:hover{transform:translateY(-4px);border-color:rgba(124,214,74,.35);box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.app-tile.flash{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,214,74,.35)}
+.app-tile-shot{position:relative;height:230px;overflow:hidden;background:#1F3640}
+.app-tile-shot img{position:absolute;left:50%;top:30px;width:min(62%,190px);transform:translateX(-50%);border-radius:16px 16px 0 0;box-shadow:0 24px 50px rgba(0,0,0,.5);transition:transform .8s var(--ease-out)}
+.app-tile:hover .app-tile-shot img{transform:translate(-50%,-10px)}
+.app-tile-shot .card-icon{right:16px;top:16px;width:40px;height:40px;font-size:18px;background:rgba(19,35,43,.6)}
+.app-tile-body{flex:1;display:flex;flex-direction:column;padding:24px 26px 26px}
+.app-tile h2{margin-top:10px;font-weight:400;font-size:32px;line-height:1;letter-spacing:-.04em}
+.app-tile p{margin-top:12px;font-size:15px;line-height:1.45;color:#CFD8DB}
+.app-tile ul{list-style:none;margin:14px 0 22px;display:grid;gap:6px;font-size:14px;color:var(--muted)}
+.app-tile li{display:flex;gap:10px;align-items:baseline}
+.app-tile li::before{content:"";width:12px;height:1px;background:var(--accent);flex:none;transform:translateY(-4px)}
+.app-tile .card-actions{gap:12px 20px}
+.app-tile .card-actions .btn-circle{font-size:16px}
+.app-tile .card-actions .btn-circle .circle{width:40px;height:40px}
+.app-tile .card-actions .text-link{font-size:13px;color:var(--muted)}
+.app-tile .card-actions .text-link:hover{color:var(--white)}
+.catalog-cta{margin-top:clamp(40px,6vw,70px);grid-template-columns:1fr;min-height:0}
+.catalog-cta .feature-copy{gap:28px}
+.catalog-cta .h2{font-size:clamp(32px,4.4vw,56px);max-width:760px}
+/* Las flechas de "Probar demo" / "Ver todas las apps" van en trazo (el relleno es solo para el ícono de play) */
+.card-actions .btn-circle.demo .circle svg{fill:none;stroke:currentColor;stroke-width:2}
+
+/* ---------- Portada centrada (computadora) ----------
+   El recuadro del logo ocupa toda la portada (sin franja vacía arriba ni a la derecha)
+   y el texto queda centrado en la altura de la pantalla, descontando la barra de arriba. */
+@media (min-width:992px){
+  .hero{display:flex;align-items:center;min-height:max(100svh,620px)}
+  .hero-copy{padding-top:88px;padding-bottom:24px}
+  .hero-media{inset:0;-webkit-mask-image:linear-gradient(180deg,#000 78%,transparent);mask-image:linear-gradient(180deg,#000 78%,transparent)}
+  .hero-media::after{background:linear-gradient(90deg,rgba(19,35,43,.92) 18%,rgba(19,35,43,.4) 45%,transparent 62%)}
+  .logo-stage{--ox:250}
+  /* baja logo y pistas juntos para centrarlos debajo de la barra de arriba (se suma al movimiento del mouse) */
+  .logo-stage{translate:var(--px,0px) calc(var(--py,0px) + 44px)}
+}
+/* Laptops pequeñas: el título pasa a 3 líneas para no tocar el logo */
+@media (min-width:992px) and (max-width:1199px){.hero-copy{max-width:560px}}
+
+/* ---------- Cambio de sección: degradado de lado a lado ----------
+   Las secciones alternan la dirección del degradado (A: se aclara a la derecha en azul,
+   B: se aclara a la izquierda en verde azulado) para que cada cambio de sección se note. */
+.statement.tint,.apps.tint,.contact.tint{background:
+  radial-gradient(45% 60% at 85% 0%,rgba(56,189,248,.16),transparent 70%),
+  linear-gradient(90deg,var(--deep) 22%,#1A3644 100%)}
+.process.tint,.founder.tint{background:
+  radial-gradient(45% 60% at 15% 0%,rgba(124,214,74,.12),transparent 70%),
+  linear-gradient(270deg,var(--deep) 22%,#183A36 100%)}

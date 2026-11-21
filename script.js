@@ -1,36 +1,24 @@
-const WA = "https://wa.me/50497458718";
-
-const APPS = [
-  { id: "taller-mecanico", name: "Taller Mecánico", tag: "Talleres", icon: "i-wrench", shot: "mw-inicio",
-    desc: "Recibe cada vehículo en segundos, cotiza y avisa al cliente por WhatsApp con un solo toque.",
-    feats: ["Órdenes por estado: diagnóstico, reparación, listo", "Historial de cada carro por placa", "Reporte semanal de ganancias"] },
-  { id: "santi", name: "Santi", tag: "Asistente con IA", icon: "i-chat", shot: "st-chat",
-    desc: "Responde a tus clientes de WhatsApp al instante, las 24 horas, aunque tú estés ocupado.",
-    feats: ["Muestra tu menú y toma pedidos", "Agenda citas fuera de horario", "Lo entrenas sin programar"] },
-  { id: "medicita", name: "MediCita", tag: "Clínicas", icon: "i-pulse", shot: "mc-agenda",
-    desc: "Tu clínica o consultorio organizado, con menos citas perdidas y pacientes mejor atendidos.",
-    feats: ["Reservas en línea desde el celular", "Recordatorios automáticos por WhatsApp", "Expediente digital y cierre de caja"] },
-  { id: "cajafacil", name: "CajaFácil", tag: "Comercio", icon: "i-cart", shot: "cf-vender",
-    desc: "Punto de venta para pulperías, tiendas y mini súper. Vende en segundos y controla tu inventario.",
-    feats: ["Cobro en efectivo, tarjeta o transferencia", "Inventario que se descuenta solo", "Factura por WhatsApp"] },
-  { id: "rescate360", name: "Rescate 360", tag: "Emergencias", icon: "i-siren", shot: "r3-inicio",
-    desc: "Para bomberos, municipalidades y equipos de rescate: cada emergencia atendida más rápido.",
-    feats: ["Alertas ciudadanas con ubicación y fotos", "Mapa de emergencias en tiempo real", "Gestión de unidades y estadísticas"] },
-  { id: "tuturno", name: "TuTurno", tag: "Salones y barberías", icon: "i-scissors", shot: "tt-agenda", video: false, nuevo: true,
-    desc: "Tus clientes reservan solos, a la hora que sí está libre, y les llega el recordatorio por WhatsApp.",
-    feats: ["Agenda por barbero, estilista o manicurista", "Reservas en línea sin choques de horario", "Caja del día con comisión por profesional"] },
-  { id: "lavafacil", name: "LavaFácil", tag: "Carwash", icon: "i-car", shot: "lf-cola", video: false, nuevo: true,
-    desc: "Cada carro en su etapa, de la espera a la entrega, y el aviso de «tu carro está listo» por WhatsApp.",
-    feats: ["Cola de lavado por bahías y etapas", "Placa con cliente frecuente y tarjeta de sellos", "Turnos, membresías y caja del día"] },
-  { id: "mesalista", name: "MesaLista", tag: "Bares y restaurantes", icon: "i-glass", shot: "ml-mesas", video: false, nuevo: true,
-    desc: "Mesas, comandas y cuentas en orden: la cocina y la barra reciben cada pedido al instante.",
-    feats: ["Plano de mesas y comandas a cocina y barra", "Cuenta con ISV, propina y división entre personas", "Ventas por mesero y lo más vendido"] }
-];
-const DEMO = (a) => `apps/${a.id}/`;
-
-/* ---------- Tarjetas de apps ---------- */
+/* ---------- Tarjetas de apps ----------
+   En la portada solo van las primeras 3 apps; la 4.ª tarjeta invita a ver el catálogo completo
+   (aplicaciones.html), para que la sección no se haga eterna al bajar. */
+const DESTACADAS = 3;
 const cards = document.getElementById("cards");
-cards.innerHTML = APPS.map((a, i) => `
+const resto = APPS.slice(DESTACADAS);
+const tarjetaMas = `
+  <article class="card card-more" style="--i:${DESTACADAS}">
+    <div class="card-body">
+      <span class="card-tag">Más apps</span>
+      <h3>¿Tu negocio es otro?</h3>
+      <p>Tenemos ${resto.length} apps más listas para probar desde tu celular, y si no está la tuya, te la hacemos a la medida.</p>
+      <ul class="more-list">${resto.map((a) => `<li><a href="aplicaciones.html#${a.id}"><span class="more-ico"><svg><use href="#${a.icon}"/></svg></span><span>${a.name}<small>${a.tag}</small></span>${a.nuevo ? `<em class="new-tag">Nuevo</em>` : ""}</a></li>`).join("")}</ul>
+      <div class="card-actions">
+        <a class="btn-circle demo" href="aplicaciones.html"><span class="circle"><svg><use href="#i-arrow"/></svg></span>Ver todas las apps</a>
+        <a class="text-link" href="${WA}?text=${encodeURIComponent("Hola Santec, quiero una app a la medida")}" target="_blank" rel="noopener">Pide una a la medida <svg><use href="#i-arrow-up"/></svg></a>
+      </div>
+    </div>
+    <div class="card-shot more-shots" aria-hidden="true">${resto.slice(0, 3).map((a) => `<img src="assets/img/${a.shot}.webp" alt="" loading="lazy">`).join("")}</div>
+  </article>`;
+cards.innerHTML = APPS.slice(0, DESTACADAS).map((a, i) => `
   <article class="card" style="--i:${i}">
     <div class="card-body">
       <span class="card-tag">${a.tag}${a.nuevo ? ` <em class="new-tag">Nuevo</em>` : ""}</span>
@@ -47,7 +35,7 @@ cards.innerHTML = APPS.map((a, i) => `
     </div>
     <div class="card-shot"><img src="assets/img/${a.shot}.webp" alt="Pantalla de ${a.name}" loading="lazy"></div>
     <span class="card-icon" aria-hidden="true"><svg><use href="#${a.icon}"/></svg></span>
-  </article>`).join("");
+  </article>`).join("") + tarjetaMas;
 
 /* ---------- Reproductor de apps (sección Nosotros) ---------- */
 (() => {
@@ -126,17 +114,17 @@ document.querySelectorAll(".split:not(.hero .split), .fade:not(.hero .fade), .fa
 
 const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* ---------- Portada: las pantallas siguen al cursor (solo con mouse) ---------- */
+/* ---------- Portada: el logo y las pistas siguen al cursor (solo con mouse) ---------- */
 if (!quieto && matchMedia("(pointer: fine)").matches) {
   const hero = document.querySelector(".hero");
-  const screens = document.querySelector(".screens");
+  const stage = document.querySelector(".logo-stage");
   hero.addEventListener("pointermove", (e) => {
     const r = hero.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-    screens.style.setProperty("--px", `${(-x * 28).toFixed(1)}px`);
-    screens.style.setProperty("--py", `${(-y * 20).toFixed(1)}px`);
+    stage.style.setProperty("--px", `${(-x * 28).toFixed(1)}px`);
+    stage.style.setProperty("--py", `${(-y * 20).toFixed(1)}px`);
   });
-  hero.addEventListener("pointerleave", () => { screens.style.setProperty("--px", "0px"); screens.style.setProperty("--py", "0px"); });
+  hero.addEventListener("pointerleave", () => { stage.style.setProperty("--px", "0px"); stage.style.setProperty("--py", "0px"); });
 }
 
 /* ---------- Apps: al apilarse, cada tarjeta se aleja un poco detrás de la siguiente ---------- */
