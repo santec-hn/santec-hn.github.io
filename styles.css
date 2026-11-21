@@ -739,3 +739,13 @@ body{background:var(--deep)}
 .process.tint,.founder.tint{background:
   radial-gradient(45% 60% at 15% 0%,rgba(124,214,74,.12),transparent 70%),
   linear-gradient(270deg,var(--deep) 22%,#183A36 100%)}
+
+/* ---------- Portada en celular: el recuadro del logo va de borde a borde ----------
+   Sin márgenes vacíos a los lados ni arriba; se desvanece hacia abajo, donde empieza el título. */
+@media (max-width:600px){
+  .hero-media{left:0;right:0;top:0;height:calc(90px + 46svh);
+    -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent);mask-image:linear-gradient(180deg,#000 72%,transparent)}
+  .hero-media::after{background:linear-gradient(180deg,transparent 55%,rgba(19,35,43,.55))}
+  /* el logo baja la mitad de la barra de arriba para quedar centrado en el espacio visible */
+  .logo-stage{translate:var(--px,0px) calc(var(--py,0px) + 45px)}
+}
